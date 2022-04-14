@@ -165,7 +165,6 @@
             <widget class="QLabel" name="label_7">
              <property name="font">
               <font>
-               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -217,7 +216,6 @@
             <widget class="QLabel" name="label_6">
              <property name="font">
               <font>
-               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -240,7 +238,6 @@
             <widget class="QLabel" name="label">
              <property name="font">
               <font>
-               <weight>75</weight>
                <bold>true</bold>
               </font>
              </property>
@@ -359,12 +356,11 @@
        <widget class="QLabel" name="label_2">
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
         <property name="text">
-         <string>Apple Daily Report Files Directory: </string>
+         <string>Apple Daily ReportsDirectory: </string>
         </property>
        </widget>
       </item>
