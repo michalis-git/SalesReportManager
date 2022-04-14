@@ -31,7 +31,7 @@ public:
 private:
     Ui::MainWindow *ui;
     AppController *mAppController;
-    QStandardItemModel *model;
+    QStandardItemModel *m_dailyModel;
     QList<QDate> calendarDateList;
     QCalendarWidget* fromCalendarWidget, *toCalendarWidget;
 

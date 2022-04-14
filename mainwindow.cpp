@@ -87,26 +87,24 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete mAppController;
-    delete model;
+    delete m_dailyModel;
     delete fromCalendarWidget;
     delete toCalendarWidget;
 }
 
-void MainWindow::initializeTableView()
-{
+void MainWindow::initializeTableView() {
     // Initialize Tableview
         QStringList titleList;
         titleList << "Provider" << "Provider Country" << "SKU" << "Developer" << "Title" << "Version" << "Type Identifier"
                   << "Units" << "Developer Proceeds" << "Begin Date" << "End Date" << "Customer Currency "<< "Country Code"
                   << "Currency of Proceeds" << "Apple Identifier" << "Customer Prise" << "Author";
-        model = new QStandardItemModel(10,titleList.count(),this);
-        for (int i = 0; i < titleList.count(); i++)
-        {
+        m_dailyModel = new QStandardItemModel(10,titleList.count(),this);
+        for (int i = 0; i < titleList.count(); i++) {
             QStandardItem *item = new QStandardItem(titleList[i]);
-            model->setHorizontalHeaderItem(i, item);
+            m_dailyModel->setHorizontalHeaderItem(i, item);
     //        delete
         }
-        ui->tableView->setModel(model);
+        ui->tableView->setModel(m_dailyModel);
         ui->tableView->resizeColumnsToContents();
         this->setEnabled(false);
         QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -119,8 +117,7 @@ void MainWindow::onListWidgetItemClicked(QListWidgetItem* item)
     else {item->setCheckState(Qt::Checked);}
 }
 
-void MainWindow::upDateCalendars(QList<QDate> dateOfReportList)
-{
+void MainWindow::upDateCalendars(QList<QDate> dateOfReportList) {
     if (dateOfReportList.isEmpty()){return;}
     ui->calendarWidget->updatesEnabled();
     QTextCharFormat keywordFormat;
@@ -128,8 +125,7 @@ void MainWindow::upDateCalendars(QList<QDate> dateOfReportList)
     keywordFormat.setBackground(Qt::yellow);
     keywordFormat.setFontWeight(QFont::Bold);
 
-    for (int i = 0; i < dateOfReportList.count(); i++)
-    {
+    for (int i = 0; i < dateOfReportList.count(); i++) {
         ui->calendarWidget->setDateTextFormat(dateOfReportList[i], keywordFormat);
         fromCalendarWidget->setDateTextFormat(dateOfReportList[i], keywordFormat);
         toCalendarWidget->setDateTextFormat(dateOfReportList[i], keywordFormat);
@@ -194,8 +190,7 @@ void MainWindow::clearTable(QTableView* table)
     table->resizeColumnsToContents();
 }
 
-void MainWindow::clearCalendars()
-{
+void MainWindow::clearCalendars() {
     if (mAppController->mAllDatesList.isEmpty()){return;}
     ui->calendarWidget->updatesEnabled();
     QTextCharFormat keywordFormat;
@@ -203,8 +198,7 @@ void MainWindow::clearCalendars()
     keywordFormat.setBackground(Qt::white);
     keywordFormat.setFontWeight(QFont::Normal);
 
-    for (int i = 0; i < mAppController->mAllDatesList.count(); i++)
-    {
+    for (int i = 0; i < mAppController->mAllDatesList.count(); i++) {
         ui->calendarWidget->setDateTextFormat(mAppController->mAllDatesList[i], keywordFormat);
         fromCalendarWidget->setDateTextFormat(mAppController->mAllDatesList[i], keywordFormat);
         toCalendarWidget->setDateTextFormat(mAppController->mAllDatesList[i], keywordFormat);
@@ -238,7 +232,7 @@ void MainWindow::populateTableWithList(QStringList list, int indexOfColumn, int 
 {
     for(int i = 0; i < numberOfRows ; i++)
     {
-        model->setItem(i, indexOfColumn, new QStandardItem(list[i]));
+        m_dailyModel->setItem(i, indexOfColumn, new QStandardItem(list[i]));
     }
     ui->tableView->resizeColumnsToContents();
 }
@@ -247,7 +241,7 @@ void MainWindow::populateTableWithVectorOfInts(QVector <int> vector, int indexOf
 {
     for(int i = 0; i < numberOfRows ; i++)
     {
-        model->setItem(i, indexOfColumn, new QStandardItem(QString::number(vector[i])));
+        m_dailyModel->setItem(i, indexOfColumn, new QStandardItem(QString::number(vector[i])));
     }
     ui->tableView->resizeColumnsToContents();
 }
@@ -256,7 +250,7 @@ void MainWindow::populateTableWithVectorOfFloats(QVector <float> vector, int ind
 {
     for(int i = 0; i < numberOfRows ; i++)
     {
-        model->setItem(i, indexOfColumn, new QStandardItem(QString::number(vector[i])));
+        m_dailyModel->setItem(i, indexOfColumn, new QStandardItem(QString::number(vector[i])));
 
     }
     ui->tableView->resizeColumnsToContents();

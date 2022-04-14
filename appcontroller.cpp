@@ -25,30 +25,23 @@ AppController::AppController(MainWindow* mainwindow)
     mExchangeRatesDirPath = QDir::homePath();
     mExchangeRatesDirPath.append("/exchange_Rates");
     if (!QDir(mExchangeRatesDirPath).exists())
-    {
        QDir().mkdir(mExchangeRatesDirPath);
-    }
 }
 
-AppController::~AppController()
-{
+AppController::~AppController() {
     delete request;
 }
 
-void AppController::requestIsFinished()
-{
+void AppController::requestIsFinished() {
     emit authorsDesignRespReceived(request->authorSingularList);
 }
 
-void AppController::artisticRequestIsFinished()
-{
-        foreach( QString key, artisticRequest->designsAuthors.keys() )
-        {
+void AppController::artisticRequestIsFinished() {
+        foreach( QString key, artisticRequest->designsAuthors.keys() ) {
             request->designsAuthors.insert(key, artisticRequest->designsAuthors.value(key));
             //qDebug() << key << artisticRequest->designsAuthors.value(key);
         }
-        foreach( QString key, artisticRequest->designsWingsPercentageMap.keys() )
-        {
+        foreach( QString key, artisticRequest->designsWingsPercentageMap.keys() ) {
             request->designsWingsPercentageMap.insert(key, artisticRequest->designsWingsPercentageMap.value(key));
             //qDebug() << key << artisticRequest->designsWingsPercentageMap.value(key);
         }
@@ -61,19 +54,14 @@ void AppController::artisticRequestIsFinished()
     emit artisticAuthorsDesignRespReceived(artisticRequest->authorSingularList);
 }
 
-QString AppController::getBrowsedPath(MainWindow* mainwindow)
-{
+QString AppController::getBrowsedPath(MainWindow* mainwindow) {
     QString path;
 
     QString defaultDirectoryPath;
     if (QDir("//file2/c").exists())
-    {
         defaultDirectoryPath = "//file2/c";
-    }
     else
-    {
         defaultDirectoryPath = QDir::homePath();
-    }
 
     QFileDialog fileDialog(mainwindow, "Open Directory", defaultDirectoryPath);
 
@@ -81,32 +69,26 @@ QString AppController::getBrowsedPath(MainWindow* mainwindow)
     fileDialog.setOption(QFileDialog::ShowDirsOnly);
     fileDialog.setWindowModality(Qt::ApplicationModal);
     int result = fileDialog.exec();
-    if (result == 1)
-    {
+    if (result == 1) {
         path = fileDialog.selectedFiles().first();
         return path;
-    }
-    else
-    {
+    } else {
         path = "cancel";
         return path;
     }
 }
 
-QList<QDate> AppController::loadAppleReportFiles(QString path, MainWindow *mainwindow)
-{
+QList<QDate> AppController::loadAppleReportFiles(QString path, MainWindow *mainwindow) {
     QStringList fullPathList = getPathsList(path);
 
-    if (fullPathList.isEmpty())
-    {
+    if (fullPathList.isEmpty()) {
         QMessageBox::warning( mainwindow, "Warning", "There are no Daily Report Files in the selected folder." );
         //mAllDatesList.clear();
         QList<QDate> dateOfReportList;
         return dateOfReportList;
     }
     QList <QDate> dateOfReportList = getDatesOfReports(fullPathList);
-    if (dateOfReportList.isEmpty())
-    {
+    if (dateOfReportList.isEmpty()) {
         QMessageBox::warning( mainwindow, "Warning", "There are no Daily Report Files in the selected folder." );
         //mAllDatesList.clear();
         return dateOfReportList;
@@ -115,8 +97,7 @@ QList<QDate> AppController::loadAppleReportFiles(QString path, MainWindow *mainw
     mDirectory = path;
 
     QString message = getMissingDates(dateOfReportList);
-    if (message.length() > 0)
-    {
+    if (message.length() > 0) {
         QApplication::restoreOverrideCursor();
         QMessageBox::warning( mainwindow, "Warning", message );
         QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -126,8 +107,7 @@ QList<QDate> AppController::loadAppleReportFiles(QString path, MainWindow *mainw
     return dateOfReportList;
 }
 
-QStringList AppController::getPathsList(QString directoryString)
-{
+QStringList AppController::getPathsList(QString directoryString) {
     QStringList fullPathList;
     QStringList list;
     QDir dir(directoryString);
@@ -136,8 +116,7 @@ QStringList AppController::getPathsList(QString directoryString)
     nameFilter << "*.txt.gz";
     list = dir.entryList(nameFilter, QDir::Files);
 
-    for (int i = 0; i < list.size(); ++i)
-    {
+    for (int i = 0; i < list.size(); ++i) {
         std::string t = list.at(i).toLocal8Bit().constData();
         QString s = QString::fromStdString(t);
         fullPathList << dirPath + "/" + s;
@@ -147,11 +126,9 @@ QStringList AppController::getPathsList(QString directoryString)
     return fullPathList;
 }
 
-QList <QDate> AppController::getDatesOfReports(QStringList list)
-{
+QList <QDate> AppController::getDatesOfReports(QStringList list) {
     QList <QDate> dateOfReportList;
-    for (int i = 0; i < list.size(); ++i)
-    {
+    for (int i = 0; i < list.size(); ++i) {
         std::string t = list.at(i).toLocal8Bit().constData();
         QString s = QString::fromStdString(t);
         s = s.right(15);
@@ -171,21 +148,17 @@ QString AppController::getMissingDates(QList <QDate> list)
     QList <QDate> missingDatesList;
 
     int dateListIndex = 1;
-    while(firstDate < lastDate)
-    {
+    while(firstDate < lastDate) {
         firstDate = firstDate.addDays(1);
         if(firstDate != list[dateListIndex])
-        {
             missingDatesList << firstDate;
-        }
-        else { dateListIndex++;}
+        else
+          dateListIndex++;
     }
 
-    if (missingDatesList.count() > 0)
-    {
+    if (missingDatesList.count() > 0) {
         message = "There are missing reports for the following dates: \n\n";
-        for (int i = 0; i < missingDatesList.count(); i++)
-        {
+        for (int i = 0; i < missingDatesList.count(); i++) {
             message.append(missingDatesList[i].toString() + "\n");
         }
     }
@@ -199,8 +172,7 @@ int AppController::onDateClicked(QDate date)
     return numberOfRows;
 }
 
-void AppController::createDayReport(QDate date)
-{
+void AppController::createDayReport(QDate date) {
     QString destinationPath = unpackDailyReportFile(date);
     QFile destinationFile(destinationPath);
 
@@ -217,15 +189,13 @@ void AppController::populateSaleItemsPerAuthorMap(QMap <QString, QList <SaleItem
 //    QList <SaleItem*> allSaleItemList;
 
     // Checks if there is a folder with Daily Report Files.
-    if (mAllDatesList.isEmpty())
-    {
+    if (mAllDatesList.isEmpty()) {
         QMessageBox::warning(mainwindow, "Warning", "You should select a folder with Daily Report Files.");
         return;
     }
 
     // Checks if the selected time period is valid.
-    if (sinceDate > untilDate)
-    {
+    if (sinceDate > untilDate) {
         QApplication::restoreOverrideCursor();
         QMessageBox::warning(mainwindow, "Warning", "The date in the first calendar must be earlier than the date in the second one.");
         QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -233,18 +203,15 @@ void AppController::populateSaleItemsPerAuthorMap(QMap <QString, QList <SaleItem
     }
 
     // Checks if there are Daily Report Files for the selected time period.
-    if(!isDailyReport(sinceDate) || !isDailyReport(untilDate))
-    {
+    if(!isDailyReport(sinceDate) || !isDailyReport(untilDate)) {
         QMessageBox::warning(mainwindow, "Warning", "You should select only the yellow dates.");
         return;
     }
 
     QList <QDate> missingDatesList;
     QDate startDate = sinceDate;
-    while(startDate < untilDate)
-    {
-        if(!isDailyReport(startDate))
-        {
+    while(startDate < untilDate) {
+        if(!isDailyReport(startDate)) {
             missingDatesList << startDate;
         }
         startDate = startDate.addDays(1);
@@ -404,8 +371,7 @@ QByteArray AppController::gzipDecompress(QByteArray &compressData )
    return uncompressed;
 }
 
-void AppController::parseDailyReport(QFile *file, QDate date)
-{
+void AppController::parseDailyReport(QFile *file, QDate date) {
     mDailyReport = new DailyReport;
 
     file->open(QIODevice::ReadOnly);
