@@ -150,7 +150,7 @@ void MainWindow::onBrowseClicked()
           if (dateOfReportList1.count() < 1) return;
 
           QSettings settings("ADRM");
-          settings.setValue("appleReportDirPath", path);
+          settings.setValue("dailyReportsDirPath", path);
           ui->sourceDirLabel->setText(path);
 
           QMessageBox::warning( this, "Warning", "The application is going to close in order to apply the change. Please run it again." );
@@ -772,8 +772,7 @@ void MainWindow::populateByCountryRep(QDate fromDate, QDate toDate, QString mess
     delete byCountryRep;
 }
 
-void MainWindow::onAuthorsDesignsRespReceived(QStringList *list)
-{
+void MainWindow::onAuthorsDesignsRespReceived(QStringList *list) {
     // Populate the Authors' CheckList.
     for (int i = 0; i < list->count(); i++)
     {
@@ -784,38 +783,13 @@ void MainWindow::onAuthorsDesignsRespReceived(QStringList *list)
     }
     ui->listWidget->item(0)->setCheckState(Qt::Unchecked);
 
-    // Check if there is a stored path, for the Daily Reports Folder, in the application's settings
-        QSettings settings("ADRM");
-        QString path;
-    if (settings.contains("appleReportDirPath")){
-        path=settings.value("appleReportDirPath").toString();
-        ui->sourceDirLabel->setText(path);
-        if (path != "")
-        {
+    QString dailyReportsPath = mAppController->dailyReportsDirPath();
 
-            QList<QDate> dateOfReportList = mAppController->loadAppleReportFiles(path, this);
-            upDateCalendars(dateOfReportList);
-            if (mAppController->mAllDatesList.isEmpty()){return;}
-            onDateClicked(dateOfReportList.last());
-        }
-        else
-        {
-            path = mAppController->getBrowsedPath(this);
-            settings.setValue("appleReportDirPath", path);
-            QList<QDate> dateOfReportList = mAppController->loadAppleReportFiles(path, this);
-            upDateCalendars(dateOfReportList);
-            if (mAppController->mAllDatesList.isEmpty()){return;}
-            onDateClicked(dateOfReportList.last());
-        }
-    }else{
-        path = mAppController->getBrowsedPath(this);
-        settings.setValue("appleReportDirPath", path);
-        ui->sourceDirLabel->setText(path);
-        QList<QDate> dateOfReportList = mAppController->loadAppleReportFiles(path, this);
-        upDateCalendars(dateOfReportList);
-        if (mAppController->mAllDatesList.isEmpty()){return;}
-        onDateClicked(dateOfReportList.last());
-    }
+    ui->sourceDirLabel->setText(dailyReportsPath);
+    QList<QDate> dateOfReportList = mAppController->loadAppleReportFiles(dailyReportsPath, this);
+    upDateCalendars(dateOfReportList);
+    if (mAppController->mAllDatesList.isEmpty()){return;}
+    onDateClicked(dateOfReportList.last());
 
     // Enable window
     this->setEnabled(true);

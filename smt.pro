@@ -4,6 +4,8 @@
 #
 #-------------------------------------------------
 
+PROJECT_PATH = $$PWD
+
 QT       += core gui
 QT       += network
 QT       += script

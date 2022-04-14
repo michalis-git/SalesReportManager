@@ -15,6 +15,11 @@
 #include <qsettings.h>
 #include <QTextStream>
 #include <QApplication>
+#include <QStandardPaths>
+
+#define EXCHANGE_RATES_DIR_PATH "/exchange_rates";
+#define DAILY_REPORTS_DIR_PATH "/apple_daily_reports";
+
 
 AppController::AppController(MainWindow* mainwindow)
 {
@@ -22,10 +27,15 @@ AppController::AppController(MainWindow* mainwindow)
     connect(request, SIGNAL(requestIsFinished()), this, SLOT(requestIsFinished()));
     artisticRequest = new HttpRequest(mainwindow, "http://www.wingssystems.com/Artistic_Snap/index.php/rest_server/all_authors_designs/format/json", "");
     connect(artisticRequest, SIGNAL(requestIsFinished()), this, SLOT(artisticRequestIsFinished()));
-    mExchangeRatesDirPath = QDir::homePath();
-    mExchangeRatesDirPath.append("/exchange_Rates");
+    mExchangeRatesDirPath = EXCHANGE_RATES_DIR_PATH;
     if (!QDir(mExchangeRatesDirPath).exists())
        QDir().mkdir(mExchangeRatesDirPath);
+
+    QSettings settings("SMT");
+    QString defDailyReportsPath = QDir::homePath() + DAILY_REPORTS_DIR_PATH;
+    m_dailyReportsDirPath = settings.value("dailyReportsDirPath", defDailyReportsPath).toString();
+    if (!QDir(m_dailyReportsDirPath).exists())
+      qDebug() << "Please browse to the Daily Reports directory";
 }
 
 AppController::~AppController() {
@@ -57,9 +67,9 @@ void AppController::artisticRequestIsFinished() {
 QString AppController::getBrowsedPath(MainWindow* mainwindow) {
     QString path;
 
-    QString defaultDirectoryPath;
-    if (QDir("//file2/c").exists())
-        defaultDirectoryPath = "//file2/c";
+    QString defaultDirectoryPath = DAILY_REPORTS_DIR_PATH;
+    if (QDir(defaultDirectoryPath).exists())
+        defaultDirectoryPath = defaultDirectoryPath;
     else
         defaultDirectoryPath = QDir::homePath();
 
@@ -81,6 +91,7 @@ QString AppController::getBrowsedPath(MainWindow* mainwindow) {
 QList<QDate> AppController::loadAppleReportFiles(QString path, MainWindow *mainwindow) {
     QStringList fullPathList = getPathsList(path);
 
+  qDebug() << path << "***";
     if (fullPathList.isEmpty()) {
         QMessageBox::warning( mainwindow, "Warning", "There are no Daily Report Files in the selected folder." );
         //mAllDatesList.clear();
@@ -105,6 +116,10 @@ QList<QDate> AppController::loadAppleReportFiles(QString path, MainWindow *mainw
 
     getRates(dateOfReportList, mainwindow);
     return dateOfReportList;
+}
+
+QString AppController::dailyReportsDirPath() {
+  return m_dailyReportsDirPath;
 }
 
 QStringList AppController::getPathsList(QString directoryString) {

@@ -23,6 +23,7 @@ public:
     QString mDirectory, mCommentString;
     DailyReport *mDailyReport;
     QString mExchangeRatesDirPath;
+    QString m_dailyReportsDirPath;
     QList <QDate> mAllDatesList;
     QStringList mAllCurrenciesList;
     QMap <QString, QMap <QString, float> > mAllRatesMap;
@@ -49,6 +50,7 @@ public:
     void getRates(QList<QDate> dateOfReportList, MainWindow* mainwindow);
     QString getBrowsedPath(MainWindow* mainwindow);
     QList<QDate> loadAppleReportFiles(QString path, MainWindow *mainwindow);
+    QString dailyReportsDirPath();
 
 private:
     QStringList getPathsList(QString directoryString);
