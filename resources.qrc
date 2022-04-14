@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/new/images">
+        <file>appleDollar.png</file>
+        <file>print_icon1.png</file>
+        <file>export.png</file>
+    </qresource>
+</RCC>
