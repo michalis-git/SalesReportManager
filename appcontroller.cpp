@@ -464,8 +464,10 @@ void AppController::parseDailyReport(QFile *file, QDate date) {
             customerPriceString = "0" +customerPriceString;
         }
         customerPriceList << customerPriceString.toFloat();
-        QString parentIdentifier = QString::fromStdString(list[17].toStdString()).replace("	", "");
-        parentIdentifierList << parentIdentifier;
+        if (list.count() > 17) {
+            QString parentIdentifier = QString::fromStdString(list[17].toStdString()).replace("	", "");
+            parentIdentifierList << parentIdentifier;
+        }
 
 
 //        QString realNameString = titleString;
@@ -733,16 +735,16 @@ void AppController::populateAllSaleItemList(QMap<QString, QList<SaleItem *>* >* 
             authorValue = "Wings Systems";
         }
         qDebug() << *saleItemsPerAuthorMap;
-        if (!(*saleItemsPerAuthorMap).contains(authorValue))// && skuString != "M00Edit_Module" && skuString != "J00Edit_Module" && skuString != "M01Text_Module" && skuString != "J01Text_Module")
-        {
-            if(!request->authorSingularList->contains(authorValue))
-            {
-                QApplication::restoreOverrideCursor();
-                QMessageBox::warning(mainwindow, "Warning", "The following uknown authors has been found: \"" + authorValue + "\"");
-                QApplication::setOverrideCursor(Qt::WaitCursor);
-            }
-            continue;
-        }
+//        if (!(*saleItemsPerAuthorMap).contains(authorValue))// && skuString != "M00Edit_Module" && skuString != "J00Edit_Module" && skuString != "M01Text_Module" && skuString != "J01Text_Module")
+//        {
+//            if(!request->authorSingularList->contains(authorValue))
+//            {
+//                QApplication::restoreOverrideCursor();
+//                QMessageBox::warning(mainwindow, "Warning", "The following uknown authors has been found: \"" + authorValue + "\"");
+//                QApplication::setOverrideCursor(Qt::WaitCursor);
+//            }
+//            continue;
+//        }
 
 
         //qDebug() << authorValue;

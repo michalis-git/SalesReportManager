@@ -102,8 +102,10 @@ void MainWindow::initializeTableView() {
 
 void MainWindow::onListWidgetItemClicked(QListWidgetItem* item) {
     bool isItemChecked = item->checkState();
-    if (isItemChecked) {item->setCheckState(Qt::Unchecked);}
-    else {item->setCheckState(Qt::Checked);}
+    if (isItemChecked)
+        item->setCheckState(Qt::Unchecked);
+    else
+        item->setCheckState(Qt::Checked);
 }
 
 void MainWindow::upDateCalendars(QList<QDate> dateOfReportList) {
@@ -190,25 +192,26 @@ void MainWindow::clearCalendars() {
 }
 
 void MainWindow::populateTable(int j) {
-    populateTableWithList((mAppController->mDailyReport->providerList), 0, j);
-    populateTableWithList((mAppController->mDailyReport->providerCountryList), 1, j);
-    populateTableWithList((mAppController->mDailyReport->skuList), 2, j);
-    populateTableWithList((mAppController->mDailyReport->developerList), 3, j);
-    populateTableWithList((mAppController->mDailyReport->titleList), 4, j);
-    populateTableWithList((mAppController->mDailyReport->versionList), 5, j);
-    populateTableWithList((mAppController->mDailyReport->productTypeIdentifierList), 6, j);
-    populateTableWithVectorOfInts((mAppController->mDailyReport->unitsList), 7, j);
-    populateTableWithVectorOfFloats((mAppController->mDailyReport->developerProceedsList), 8, j);
-    populateTableWithList((mAppController->mDailyReport->beginDateList), 9, j);
-    populateTableWithList((mAppController->mDailyReport->endDateList), 10, j);
-    populateTableWithList((mAppController->mDailyReport->customerCurrencyList), 11, j);
-    populateTableWithList((mAppController->mDailyReport->countryCodeList), 12, j);
-    populateTableWithList((mAppController->mDailyReport->currencyOfProceedsList), 13, j);
-    populateTableWithVectorOfInts((mAppController->mDailyReport->appleIdentifierList), 14, j);
-    populateTableWithVectorOfFloats((mAppController->mDailyReport->customerPriceList), 15, j);
-    populateTableWithList((mAppController->mDailyReport->authorNameList), 16, j);
-    populateTableWithList((mAppController->mDailyReport->parentIdentifierList), 17, j);
-    delete mAppController->mDailyReport;
+    DailyReport *report = mAppController->mDailyReport;
+    populateTableWithList((report->providerList), 0, j);
+    populateTableWithList((report->providerCountryList), 1, j);
+    populateTableWithList((report->skuList), 2, j);
+    populateTableWithList((report->developerList), 3, j);
+    populateTableWithList((report->titleList), 4, j);
+    populateTableWithList((report->versionList), 5, j);
+    populateTableWithList((report->productTypeIdentifierList), 6, j);
+    populateTableWithVectorOfInts((report->unitsList), 7, j);
+    populateTableWithVectorOfFloats((report->developerProceedsList), 8, j);
+    populateTableWithList((report->beginDateList), 9, j);
+    populateTableWithList((report->endDateList), 10, j);
+    populateTableWithList((report->customerCurrencyList), 11, j);
+    populateTableWithList((report->countryCodeList), 12, j);
+    populateTableWithList((report->currencyOfProceedsList), 13, j);
+    populateTableWithVectorOfInts((report->appleIdentifierList), 14, j);
+    populateTableWithVectorOfFloats((report->customerPriceList), 15, j);
+    populateTableWithList((report->authorNameList), 16, j);
+    //populateTableWithList((report->parentIdentifierList), 17, j);
+    delete report;
 }
 
 void MainWindow::populateTableWithList(QStringList list, int indexOfColumn, int numberOfRows) {
