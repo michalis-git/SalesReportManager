@@ -27,34 +27,24 @@
 #include <QScrollBar>
 #include <QLayoutItem>
 
-bool authorLessThan(const SaleItem* d1, const SaleItem* d2)
-{
-    if (d1->realName == d2->realName)
-    {
-        return d1->currencyOfProceeds < d2->currencyOfProceeds;
-    }
+bool authorLessThan(const SaleItem* left, const SaleItem* right) {
+    if (left->realName == right->realName)
+        return left->currencyOfProceeds < right->currencyOfProceeds;
     else
-    {
-        return d1->realName < d2->realName;
-    }
+        return left->realName < right->realName;
 }
 
-bool countryLessThan(const SaleItem* d1, const SaleItem* d2)
-{
-    if (d1->realName == d2->realName)
-    {
-        return d1->countryCode < d2->countryCode;
-    }
+bool countryLessThan(const SaleItem* left, const SaleItem* right) {
+    if (left->realName == right->realName)
+        return left->countryCode < right->countryCode;
     else
-    {
-        return d1->realName < d2->realName;
-    }
+        return left->realName < right->realName;
 }
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
-{
+    ui(new Ui::MainWindow) {
+
     ui->setupUi(this);
     mAppController = new AppController(this);
 
@@ -83,8 +73,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initializeTableView();
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
     delete mAppController;
     delete m_dailyModel;
@@ -93,6 +82,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::initializeTableView() {
+ //TODO: populate titleList from file
     // Initialize Tableview
         QStringList titleList;
         titleList << "Provider" << "Provider Country" << "SKU" << "Developer" << "Title" << "Version" << "Type Identifier"
@@ -110,8 +100,7 @@ void MainWindow::initializeTableView() {
         QApplication::setOverrideCursor(Qt::WaitCursor);
 }
 
-void MainWindow::onListWidgetItemClicked(QListWidgetItem* item)
-{
+void MainWindow::onListWidgetItemClicked(QListWidgetItem* item) {
     bool isItemChecked = item->checkState();
     if (isItemChecked) {item->setCheckState(Qt::Unchecked);}
     else {item->setCheckState(Qt::Checked);}
@@ -160,19 +149,16 @@ void MainWindow::onBrowseClicked()
       }
 }
 
-void MainWindow::onDateClicked(QDate date)
-{
+void MainWindow::onDateClicked(QDate date) {
     clearTable(ui->tableView);
-    if (mAppController->mAllDatesList.isEmpty())
-    {
+    if (mAppController->mAllDatesList.isEmpty()) {
         QMessageBox::warning( this, "Warning",
                               "There are no daily report files loaded. Please, browse the directory that contains them." );
         return;
     }
 
     // Checks if there are Daily Report Files for the selected date.
-    if(!mAppController->isDailyReport(date))
-    {
+    if(!mAppController->isDailyReport(date)) {
         QMessageBox::warning( this, "Warning", "You should select only the yellow dates." );
         return;
     }
@@ -181,10 +167,8 @@ void MainWindow::onDateClicked(QDate date)
     populateTable(numberOfRows);
 }
 
-void MainWindow::clearTable(QTableView* table)
-{
-    while (table->model()->rowCount() > 0)
-    {
+void MainWindow::clearTable(QTableView* table) {
+    while (table->model()->rowCount() > 0) {
         table->model()->removeRow(0);
     }
     table->resizeColumnsToContents();
@@ -205,8 +189,7 @@ void MainWindow::clearCalendars() {
     }
 }
 
-void MainWindow::populateTable(int j)
-{
+void MainWindow::populateTable(int j) {
     populateTableWithList((mAppController->mDailyReport->providerList), 0, j);
     populateTableWithList((mAppController->mDailyReport->providerCountryList), 1, j);
     populateTableWithList((mAppController->mDailyReport->skuList), 2, j);
@@ -228,26 +211,21 @@ void MainWindow::populateTable(int j)
     delete mAppController->mDailyReport;
 }
 
-void MainWindow::populateTableWithList(QStringList list, int indexOfColumn, int numberOfRows)
-{
-    for(int i = 0; i < numberOfRows ; i++)
-    {
+void MainWindow::populateTableWithList(QStringList list, int indexOfColumn, int numberOfRows) {
+    for(int i = 0; i < numberOfRows ; i++) {
         m_dailyModel->setItem(i, indexOfColumn, new QStandardItem(list[i]));
     }
     ui->tableView->resizeColumnsToContents();
 }
 
-void MainWindow::populateTableWithVectorOfInts(QVector <int> vector, int indexOfColumn, int numberOfRows)
-{
-    for(int i = 0; i < numberOfRows ; i++)
-    {
+void MainWindow::populateTableWithVectorOfInts(QVector <int> vector, int indexOfColumn, int numberOfRows) {
+    for(int i = 0; i < numberOfRows ; i++) {
         m_dailyModel->setItem(i, indexOfColumn, new QStandardItem(QString::number(vector[i])));
     }
     ui->tableView->resizeColumnsToContents();
 }
 
-void MainWindow::populateTableWithVectorOfFloats(QVector <float> vector, int indexOfColumn, int numberOfRows)
-{
+void MainWindow::populateTableWithVectorOfFloats(QVector <float> vector, int indexOfColumn, int numberOfRows) {
     for(int i = 0; i < numberOfRows ; i++)
     {
         m_dailyModel->setItem(i, indexOfColumn, new QStandardItem(QString::number(vector[i])));
@@ -256,8 +234,7 @@ void MainWindow::populateTableWithVectorOfFloats(QVector <float> vector, int ind
     ui->tableView->resizeColumnsToContents();
 }
 
-void MainWindow::onDoneClicked()
-{
+void MainWindow::onDoneClicked() {
     this->setDisabled(true);
     QApplication::setOverrideCursor(Qt::WaitCursor);
 //    if (ui->comboBox->currentIndex() == 0)

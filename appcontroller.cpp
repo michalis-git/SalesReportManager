@@ -21,8 +21,7 @@
 #define DAILY_REPORTS_DIR_PATH "/apple_daily_reports";
 
 
-AppController::AppController(MainWindow* mainwindow)
-{
+AppController::AppController(MainWindow* mainwindow) {
     request = new HttpRequest(mainwindow, "http://www.wingssystems.com/index.php/rest_server/all_authors_designs/format/json", "");
     connect(request, SIGNAL(requestIsFinished()), this, SLOT(requestIsFinished()));
     artisticRequest = new HttpRequest(mainwindow, "http://www.wingssystems.com/Artistic_Snap/index.php/rest_server/all_authors_designs/format/json", "");
