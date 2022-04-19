@@ -17,6 +17,7 @@
 #include <QApplication>
 #include <QStandardPaths>
 
+#include <QStandardItemModel>
 #include <exchangerates.h>
 
 #define EXCHANGE_RATES_DIR_PATH "/exchange_rates";
@@ -174,6 +175,9 @@ QString AppController::getMissingDates(QList <QDate> list)
 int AppController::onDateClicked(QDate date) {
   createDayReport(date);
   int numberOfRows = mDailyReport->providerList.count();
+
+  QStandardItemModel *dayModel = new QStandardItemModel;
+  // mainwindow->dayReptab->setModel();
   return numberOfRows;
 }
 
