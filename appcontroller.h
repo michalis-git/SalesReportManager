@@ -26,7 +26,6 @@ public:
     QString m_dailyReportsDirPath;
     QList <QDate> mAllDatesList;
     QStringList mAllCurrenciesList;
-    QMap <QString, QMap <QString, float> > mAllRatesMap;
 
     QList <QDate> readFilesFromDirectory(MainWindow *mainwindow, QString path);
     QList <QDate> onBrowseClicked(MainWindow *mainwindow);
@@ -47,7 +46,6 @@ public:
     void parseDailyReport(QFile *file, QDate date);
     QString unpackDailyReportFile(QDate date);
     QStringList *getAuthorList();
-    void getRates(QList<QDate> dateOfReportList, MainWindow* mainwindow);
     QString getBrowsedPath(MainWindow* mainwindow);
     QList<QDate> loadAppleReportFiles(QString path, MainWindow *mainwindow);
     QString dailyReportsDirPath();
@@ -59,9 +57,6 @@ private:
     void createAdditionalDateList(QDate startDate, QDate endDate, MainWindow *mainwindow);
     void getFirstLastDatesFromRateFile(QDate& firstDateOfRates, QDate& lastDateOfRates, QStringList fullPathList, MainWindow *mainwindow);
     void createRateFiles(QList<QDate> dateOfReportList, MainWindow *mainwindow);
-    void loadAllRates(QStringList fullPathList);
-    QStringList createFullPathList();
-    QDate getLastDateFromRateFile(QString filePath, MainWindow* mainwindow);
 
 private slots:
     void requestIsFinished();

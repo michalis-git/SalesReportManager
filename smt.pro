@@ -18,6 +18,7 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
+  exchangerates.cpp \
         mainwindow.cpp \
     dailyreport.cpp \
     appcontroller.cpp \
@@ -34,6 +35,7 @@ HEADERS  += mainwindow.h \
     dailyreport.h \
     appcontroller.h \
     currency.h \
+    exchangerates.h \
     saleitem.h \
     httprequest.h \
     reports/subsidiaryledgerrep.h \
