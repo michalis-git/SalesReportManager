@@ -6,6 +6,7 @@
 #include <qlist.h>
 #include <QMap>
 
+class QStandardItemModel;
 class QFile;
 class HttpRequest;
 class MainWindow;
@@ -19,6 +20,7 @@ class AppController : public QObject
 public:
     AppController(MainWindow* mainwindow);
     ~AppController();
+    MainWindow *m_mainWindow;
     HttpRequest *request, *artisticRequest, *request1, *exchangeRatesRequest;
     QString mDirectory, mCommentString;
     DailyReport *mDailyReport;
@@ -42,6 +44,7 @@ public:
 //    QString getMissingDates1(QDate* sinceDate, QDate* untilDate);
     bool isDailyReport(QDate date);
     void createDayReport(QDate date);
+    QStandardItemModel *dayReportModel(const QDate &date);
     QByteArray gzipDecompress(QByteArray &compressData);
     void parseDailyReport(QFile *file, QDate date);
     QString unpackDailyReportFile(QDate date);

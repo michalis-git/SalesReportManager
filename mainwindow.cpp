@@ -70,6 +70,7 @@ MainWindow::MainWindow(QWidget *parent) :
     toCalendarWidget = new QCalendarWidget;
     ui->toDateEdit->setCalendarWidget(toCalendarWidget);
 
+
     initializeTableView();
 }
 
@@ -167,6 +168,10 @@ void MainWindow::onDateClicked(QDate date) {
 
     int numberOfRows = mAppController->onDateClicked(date);
     populateTable(numberOfRows);
+
+    QStandardItemModel *model = mAppController->dayReportModel(date);
+//    if (model && model->rowCount())
+        ui->dayTableView->setModel(model);
 }
 
 void MainWindow::clearTable(QTableView* table) {

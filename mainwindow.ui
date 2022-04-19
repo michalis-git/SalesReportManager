@@ -352,6 +352,11 @@
        <attribute name="title">
         <string>Day Report</string>
        </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QTableView" name="dayTableView"/>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -406,7 +411,7 @@
      <x>0</x>
      <y>0</y>
      <width>1329</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
