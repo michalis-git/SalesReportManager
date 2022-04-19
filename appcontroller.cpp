@@ -26,15 +26,19 @@ AppController::AppController(MainWindow* mainwindow) {
     connect(request, SIGNAL(requestIsFinished()), this, SLOT(requestIsFinished()));
     artisticRequest = new HttpRequest(mainwindow, "http://www.wingssystems.com/Artistic_Snap/index.php/rest_server/all_authors_designs/format/json", "");
     connect(artisticRequest, SIGNAL(requestIsFinished()), this, SLOT(artisticRequestIsFinished()));
-    mExchangeRatesDirPath = EXCHANGE_RATES_DIR_PATH;
-    if (!QDir(mExchangeRatesDirPath).exists())
-       QDir().mkdir(mExchangeRatesDirPath);
+
+    m_ratesDirPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation)
+            + EXCHANGE_RATES_DIR_PATH;
+
+    if (!QDir(m_ratesDirPath).exists()) {
+        QMessageBox::warning(mainwindow, "Warning", "Please browse to the directory containing the exchange rates.");
+    }
 
     QSettings settings("SMT");
     QString defDailyReportsPath = QDir::homePath() + DAILY_REPORTS_DIR_PATH;
     m_dailyReportsDirPath = settings.value("dailyReportsDirPath", defDailyReportsPath).toString();
     if (!QDir(m_dailyReportsDirPath).exists())
-      qDebug() << "Please browse to the Daily Reports directory";
+        qDebug() << "Please browse to the Daily Reports directory";
 }
 
 AppController::~AppController() {
@@ -46,19 +50,19 @@ void AppController::requestIsFinished() {
 }
 
 void AppController::artisticRequestIsFinished() {
-        foreach( QString key, artisticRequest->designsAuthors.keys() ) {
-            request->designsAuthors.insert(key, artisticRequest->designsAuthors.value(key));
-            //qDebug() << key << artisticRequest->designsAuthors.value(key);
-        }
-        foreach( QString key, artisticRequest->designsWingsPercentageMap.keys() ) {
-            request->designsWingsPercentageMap.insert(key, artisticRequest->designsWingsPercentageMap.value(key));
-            //qDebug() << key << artisticRequest->designsWingsPercentageMap.value(key);
-        }
-//        for (int i = 0; i < artisticRequest->authorSingularList->count(); i++)
-//        {
-//            request->authorSingularList.insert(key, artisticRequest->authorSingularList->value(key));
-//            qDebug() << key << artisticRequest->authorSingularList->value(key);
-//        }
+    foreach( QString key, artisticRequest->designsAuthors.keys() ) {
+        request->designsAuthors.insert(key, artisticRequest->designsAuthors.value(key));
+        //qDebug() << key << artisticRequest->designsAuthors.value(key);
+    }
+    foreach( QString key, artisticRequest->designsWingsPercentageMap.keys() ) {
+        request->designsWingsPercentageMap.insert(key, artisticRequest->designsWingsPercentageMap.value(key));
+        //qDebug() << key << artisticRequest->designsWingsPercentageMap.value(key);
+    }
+    //        for (int i = 0; i < artisticRequest->authorSingularList->count(); i++)
+    //        {
+    //            request->authorSingularList.insert(key, artisticRequest->authorSingularList->value(key));
+    //            qDebug() << key << artisticRequest->authorSingularList->value(key);
+    //        }
 
     emit artisticAuthorsDesignRespReceived(artisticRequest->authorSingularList);
 }
@@ -88,29 +92,27 @@ QString AppController::getBrowsedPath(MainWindow* mainwindow) {
 }
 
 QList<QDate> AppController::loadAppleReportFiles(QString path, MainWindow *mainwindow) {
-    QStringList fullPathList = getPathsList(path);
+    QStringList nameFilter;
+    nameFilter << "*.txt.gz";
+    QFileInfoList fileInfoList = QDir(path).entryInfoList(nameFilter, QDir::Dirs | QDir::Files
+                                                                 | QDir::NoSymLinks | QDir::NoDot
+                                                                 | QDir::NoDotDot);
+    QStringList pathList;
+    for (auto &fileInfo : fileInfoList) {
+        pathList << fileInfo.absoluteFilePath();
+    }
 
-  qDebug() << path << "***";
-    if (fullPathList.isEmpty()) {
+    if (pathList.isEmpty()) {
         QMessageBox::warning( mainwindow, "Warning", "There are no Daily Report Files in the selected folder." );
-        //mAllDatesList.clear();
-        QList<QDate> dateOfReportList;
-        return dateOfReportList;
+        return QList<QDate>{};
     }
-    QList <QDate> dateOfReportList = getDatesOfReports(fullPathList);
-    if (dateOfReportList.isEmpty()) {
-        QMessageBox::warning( mainwindow, "Warning", "There are no Daily Report Files in the selected folder." );
-        //mAllDatesList.clear();
-        return dateOfReportList;
-    }
+    QList <QDate> dateOfReportList = getDatesOfReports(pathList);
 
     mDirectory = path;
 
     QString message = getMissingDates(dateOfReportList);
     if (message.length() > 0) {
-        QApplication::restoreOverrideCursor();
         QMessageBox::warning( mainwindow, "Warning", message );
-        QApplication::setOverrideCursor(Qt::WaitCursor);
     }
 
     getRates(dateOfReportList, mainwindow);
@@ -118,26 +120,7 @@ QList<QDate> AppController::loadAppleReportFiles(QString path, MainWindow *mainw
 }
 
 QString AppController::dailyReportsDirPath() {
-  return m_dailyReportsDirPath;
-}
-
-QStringList AppController::getPathsList(QString directoryString) {
-    QStringList fullPathList;
-    QStringList list;
-    QDir dir(directoryString);
-    QString dirPath = dir.path();
-    QStringList nameFilter;
-    nameFilter << "*.txt.gz";
-    list = dir.entryList(nameFilter, QDir::Files);
-
-    for (int i = 0; i < list.size(); ++i) {
-        std::string t = list.at(i).toLocal8Bit().constData();
-        QString s = QString::fromStdString(t);
-        fullPathList << dirPath + "/" + s;
-        s = s.right(15);
-        s = s.left(8);
-    }
-    return fullPathList;
+    return m_dailyReportsDirPath;
 }
 
 QList <QDate> AppController::getDatesOfReports(QStringList list) {
@@ -167,7 +150,7 @@ QString AppController::getMissingDates(QList <QDate> list)
         if(firstDate != list[dateListIndex])
             missingDatesList << firstDate;
         else
-          dateListIndex++;
+            dateListIndex++;
     }
 
     if (missingDatesList.count() > 0) {
@@ -179,8 +162,7 @@ QString AppController::getMissingDates(QList <QDate> list)
     return message;
 }
 
-int AppController::onDateClicked(QDate date)
-{
+int AppController::onDateClicked(QDate date) {
     createDayReport(date);
     int numberOfRows = mDailyReport->providerList.count();
     return numberOfRows;
@@ -199,8 +181,8 @@ void AppController::createDayReport(QDate date) {
 
 void AppController::populateSaleItemsPerAuthorMap(QMap <QString, QList <SaleItem*>* > *saleItemsPerAuthorMap, MainWindow* mainwindow, QDate sinceDate, QDate untilDate, QStringList authorsSelectedList, QString *missingDatesMessage)
 {
-//    QMap <QString, QList<SaleItem*> > saleItemsPerAuthorMap;
-//    QList <SaleItem*> allSaleItemList;
+    //    QMap <QString, QList<SaleItem*> > saleItemsPerAuthorMap;
+    //    QList <SaleItem*> allSaleItemList;
 
     // Checks if there is a folder with Daily Report Files.
     if (mAllDatesList.isEmpty()) {
@@ -232,11 +214,9 @@ void AppController::populateSaleItemsPerAuthorMap(QMap <QString, QList <SaleItem
     }
 
     QString message = "";
-    for (int i = 0; i < missingDatesList.count(); i++)
-    {
+    for (int i = 0; i < missingDatesList.count(); i++) {
         message = "There are missing reports for the following dates:\n";
-        for (int i = 0; i < missingDatesList.count(); i++)
-        {
+        for (int i = 0; i < missingDatesList.count(); i++) {
             message.append(missingDatesList[i].toString() + ", ");
         }
         message = message.left(message.length() - 2);
@@ -248,141 +228,125 @@ void AppController::populateSaleItemsPerAuthorMap(QMap <QString, QList <SaleItem
         QApplication::setOverrideCursor(Qt::WaitCursor);
 
         *missingDatesMessage = message;
-    }
-    else
-    {
+    } else {
         *missingDatesMessage = "";
     }
 
     // Creates one AuthorList object for each Author and inserts them into a map
-    for (int i = 0; i < authorsSelectedList.count(); i++)
-    {
+    for (int i = 0; i < authorsSelectedList.count(); i++) {
         QList <SaleItem*>* saleItemList = new QList <SaleItem*>;
         saleItemsPerAuthorMap->insert(authorsSelectedList[i], saleItemList);
     }
 
-    while(sinceDate <= untilDate)
-    {
+    while(sinceDate <= untilDate) {
         if(isDailyReport(sinceDate))
-        {
             populateAllSaleItemList(saleItemsPerAuthorMap, &sinceDate, mainwindow);
-        }
         sinceDate = sinceDate.addDays(1);
     }
     return;
 }
 
-QString AppController::unpackDailyReportFile(QDate date)
-{
+QString AppController::unpackDailyReportFile(QDate date) {
     // Gets the file name from the selected date and creates the full path of the file.
-        QString dateStr = date.toString("yyyyMMdd");
-        QStringList nameFilter;
-        QStringList list;
-        nameFilter << "*" + dateStr+ ".txt.gz";
-        QDir dir(mDirectory);
+    QString dateStr = date.toString("yyyyMMdd");
+    QStringList nameFilter;
+    QStringList list;
+    nameFilter << "*" + dateStr+ ".txt.gz";
+    QDir dir(mDirectory);
 
-        list = dir.entryList(nameFilter, QDir::Files);
-        QString fullFilePath = mDirectory + "/" + list.first();
+    list = dir.entryList(nameFilter, QDir::Files);
+    QString fullFilePath = mDirectory + "/" + list.first();
 
-        // Decompresses the file in temporary file.
-        QFile sourceFile(fullFilePath);
-        QByteArray sourceData;
+    // Decompresses the file in temporary file.
+    QFile sourceFile(fullFilePath);
+    QByteArray sourceData;
 
-        if(sourceFile.open(QIODevice::ReadOnly))
+    if(sourceFile.open(QIODevice::ReadOnly))
+    {
+        QDataStream in1(&sourceFile);
+        while(!in1.atEnd())
         {
-            QDataStream in1(&sourceFile);
-            while(!in1.atEnd())
-            {
-                char *c = new char[1];
-                in1.readRawData(c,1);
-                sourceData.push_back(*c);
-                delete []c;
-            }
-            sourceFile.close();
+            char *c = new char[1];
+            in1.readRawData(c,1);
+            sourceData.push_back(*c);
+            delete []c;
         }
+        sourceFile.close();
+    }
 
-        //Create tmp folder
-        QString folderPath = QDir::home().path() + "/tmpApplReports";
-        if (!QDir(folderPath).exists())
-        {
-           QDir().mkdir(folderPath);
-        }
-        QString destinationFilePath = folderPath + "/" + dateStr + ".txt";
-        QFile destinationFile(destinationFilePath);
-        QByteArray destinationData = gzipDecompress(sourceData);
-        destinationFile.open(QIODevice::WriteOnly);
-        destinationFile.write(destinationData);
-        destinationFile.close();
+    //Create tmp folder
+    QString folderPath = QDir::home().path() + "/tmpApplReports";
+    if (!QDir(folderPath).exists())
+    {
+        QDir().mkdir(folderPath);
+    }
+    QString destinationFilePath = folderPath + "/" + dateStr + ".txt";
+    QFile destinationFile(destinationFilePath);
+    QByteArray destinationData = gzipDecompress(sourceData);
+    destinationFile.open(QIODevice::WriteOnly);
+    destinationFile.write(destinationData);
+    destinationFile.close();
 
-        return destinationFilePath;
+    return destinationFilePath;
 }
 
-bool AppController::isDailyReport(QDate date)
-{
-    for (int i = 0; i < mAllDatesList.count(); i++)
-    {
+bool AppController::isDailyReport(QDate date) {
+    for (int i = 0; i < mAllDatesList.count(); i++) {
         if (date == (mAllDatesList)[i])
-        {
             return true;
-        }
     }
     return false;
 }
 
 
-QByteArray AppController::gzipDecompress(QByteArray &compressData )
-{
-   //strip header
-   compressData.remove(0, 10);
+QByteArray AppController::gzipDecompress(QByteArray &compressData ) {
+    //strip header
+    compressData.remove(0, 10);
 
-   const int buffer_size = 16384;
-   quint8 buffer[buffer_size];
+    const int buffer_size = 16384;
+    quint8 buffer[buffer_size];
 
-   z_stream cmpr_stream;
-   cmpr_stream.next_in = (unsigned char *)compressData.data();
-   cmpr_stream.avail_in = compressData.size();
-   cmpr_stream.total_in = 0;
+    z_stream cmpr_stream;
+    cmpr_stream.next_in = (unsigned char *)compressData.data();
+    cmpr_stream.avail_in = compressData.size();
+    cmpr_stream.total_in = 0;
 
-   cmpr_stream.next_out = buffer;
-   cmpr_stream.avail_out = buffer_size;
-   cmpr_stream.total_out = 0;
+    cmpr_stream.next_out = buffer;
+    cmpr_stream.avail_out = buffer_size;
+    cmpr_stream.total_out = 0;
 
-   cmpr_stream.zalloc = Z_NULL;
-   cmpr_stream.zfree = Z_NULL;
-   cmpr_stream.opaque = Z_NULL;
+    cmpr_stream.zalloc = Z_NULL;
+    cmpr_stream.zfree = Z_NULL;
+    cmpr_stream.opaque = Z_NULL;
 
-   int status = inflateInit2( &cmpr_stream, -8 );
-   if (status != Z_OK) {
-       qDebug() << "cmpr_stream error!";
-   }
+    int status = inflateInit2( &cmpr_stream, -8 );
+    if (status != Z_OK) {
+        qDebug() << "cmpr_stream error!";
+    }
 
-   QByteArray uncompressed;
-   do {
-       cmpr_stream.next_out = buffer;
-       cmpr_stream.avail_out = buffer_size;
+    QByteArray uncompressed;
+    do {
+        cmpr_stream.next_out = buffer;
+        cmpr_stream.avail_out = buffer_size;
 
-       status = inflate( &cmpr_stream, Z_NO_FLUSH );
+        status = inflate( &cmpr_stream, Z_NO_FLUSH );
 
-       if (status == Z_OK || status == Z_STREAM_END)
-       {
-           QByteArray chunk = QByteArray::fromRawData((char *)buffer, buffer_size - cmpr_stream.avail_out);
-           uncompressed.append( chunk );
-       }
-       else
-       {
-           inflateEnd(&cmpr_stream);
-           break;
-       }
+        if (status == Z_OK || status == Z_STREAM_END) {
+            QByteArray chunk = QByteArray::fromRawData((char *)buffer, buffer_size - cmpr_stream.avail_out);
+            uncompressed.append( chunk );
+        } else {
+            inflateEnd(&cmpr_stream);
+            break;
+        }
 
-       if (status == Z_STREAM_END)
-       {
-           inflateEnd(&cmpr_stream);
-           break;
-       }
-   }
-   while (cmpr_stream.avail_out == 0);
+        if (status == Z_STREAM_END) {
+            inflateEnd(&cmpr_stream);
+            break;
+        }
+    }
+    while (cmpr_stream.avail_out == 0);
 
-   return uncompressed;
+    return uncompressed;
 }
 
 void AppController::parseDailyReport(QFile *file, QDate date) {
@@ -470,53 +434,53 @@ void AppController::parseDailyReport(QFile *file, QDate date) {
         }
 
 
-//        QString realNameString = titleString;
-//        if (parentIdentifierString.isEmpty())
-//        {
-//            if (skuString == "DRAWings.Snap.X001")
-//            {
-//                realNameList << "MacDRAWings";
-//                //parentIdentifierString = "-";
-//            }
-//            else
-//            {
-//                realNameList << "Drawings Snap";
-//                //parentIdentifierString = "-";
-//            }
-//        }
-//        else
-//        {
-//            if (titleString == "00Edit_Module" | titleString == "M00Edit_Module")
-//            {
-//                realNameList << "Editing Module";
-//            }
-//            else if (titleString == "DRAWings Snap")
-//            {
-//                realNameList << "sss";
-//            }
-//            else
-//            {
-//                QString formatedName = titleString.left(titleString.length() - 8);
-//                if (formatedName.right(1) == ("_"))
-//                {
-//                    formatedName = formatedName.left(formatedName.length() - 1);
-//                    formatedName.append(" (Pack.) ");
-//                }
-//                realNameList << formatedName;
-//            }
-//        }
-//        if (parentIdentifierList.right(4) == "X001")
-//        {
-//            parentIdentifierList = "MacDRAWings";
-//        }
-//        else if (parentIdentifierList.right(4) == ".001")
-//        {
-//            parentIdentifierList = "Drawings Snap";
-//        }
-//        else
-//        {
-//            parentIdentifierList = "-";
-//        }
+        //        QString realNameString = titleString;
+        //        if (parentIdentifierString.isEmpty())
+        //        {
+        //            if (skuString == "DRAWings.Snap.X001")
+        //            {
+        //                realNameList << "MacDRAWings";
+        //                //parentIdentifierString = "-";
+        //            }
+        //            else
+        //            {
+        //                realNameList << "Drawings Snap";
+        //                //parentIdentifierString = "-";
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if (titleString == "00Edit_Module" | titleString == "M00Edit_Module")
+        //            {
+        //                realNameList << "Editing Module";
+        //            }
+        //            else if (titleString == "DRAWings Snap")
+        //            {
+        //                realNameList << "sss";
+        //            }
+        //            else
+        //            {
+        //                QString formatedName = titleString.left(titleString.length() - 8);
+        //                if (formatedName.right(1) == ("_"))
+        //                {
+        //                    formatedName = formatedName.left(formatedName.length() - 1);
+        //                    formatedName.append(" (Pack.) ");
+        //                }
+        //                realNameList << formatedName;
+        //            }
+        //        }
+        //        if (parentIdentifierList.right(4) == "X001")
+        //        {
+        //            parentIdentifierList = "MacDRAWings";
+        //        }
+        //        else if (parentIdentifierList.right(4) == ".001")
+        //        {
+        //            parentIdentifierList = "Drawings Snap";
+        //        }
+        //        else
+        //        {
+        //            parentIdentifierList = "-";
+        //        }
     }
     file->close();
 
@@ -543,8 +507,7 @@ void AppController::parseDailyReport(QFile *file, QDate date) {
     // maDailyReport is deleted in mainwindow, after its data are loaded on a table.
 }
 
-void AppController::getRates(QList<QDate> dateOfReportList,  MainWindow *mainwindow)
-{
+void AppController::getRates(QList<QDate> dateOfReportList,  MainWindow *mainwindow) {
     QStringList fullPathList;
     fullPathList = createFullPathList();
     if (fullPathList.isEmpty()) {return;}
@@ -552,8 +515,7 @@ void AppController::getRates(QList<QDate> dateOfReportList,  MainWindow *mainwin
     //Gets the lastDateOfRates from a file in Rates Folder
     QDate lastDateOfRates  = getLastDateFromRateFile(fullPathList.first(), mainwindow);
 
-    if (dateOfReportList.last() > lastDateOfRates.addDays(3))
-    {
+    if (dateOfReportList.last() > lastDateOfRates.addDays(3)) {
         QString message =  "It has been more than 3 days since the last update of the exchange rates.";
         QApplication::restoreOverrideCursor();
         QMessageBox::warning(mainwindow, "Warning", message);
@@ -568,7 +530,7 @@ QStringList AppController::createFullPathList()
 {
     QStringList fullPathList;
     QStringList pathList;
-    QDir rateDirectory(mExchangeRatesDirPath);
+    QDir rateDirectory(m_ratesDirPath);
     QStringList nameFilter;
     nameFilter << "*.txt";
     pathList = rateDirectory.entryList(nameFilter, QDir::Files);
@@ -578,7 +540,7 @@ QStringList AppController::createFullPathList()
     {
         std::string t = pathList.at(i).toLocal8Bit().constData();
         QString s = QString::fromStdString(t);
-        fullPathList << mExchangeRatesDirPath + "/" + s;
+        fullPathList << m_ratesDirPath + "/" + s;
     }
 
     //Creates Rate Files
@@ -630,57 +592,49 @@ QDate AppController::getLastDateFromRateFile(QString filePath, MainWindow* mainw
     return firstDate;
 }
 
-void AppController::loadAllRates(QStringList fullPathList)
-{
-    for (int i = 0; i < fullPathList.count(); i++)
-    {
-        QMap <QString, float> ratesPerCurrencyMap;
-        QString allRatesKey = fullPathList[i].right(7).left(3).toUpper();
-        QFile destinationFile(fullPathList[i]);
-        destinationFile.open(QIODevice::ReadOnly);
-        QStringList fileLineList;
-        QTextStream textStream(&destinationFile);
-        QString previousDate = "";
-        float rateTotal = 0;
-        int rateCounter = 0;
-        while (true)
-        {
-            QString line = textStream.readLine();
-            if (line.isNull())
-                break;
-            else
-            {
-                fileLineList.append(line);
-                if (line.left(10) == previousDate)
-                {
-                    rateTotal += line.right(line.length() - 11).toFloat();
-                    rateCounter++;
-                    previousDate = line.left(10);
+void AppController::loadAllRates(QStringList fullPathList) {
+    QStringList nameFilter;
+    nameFilter << "*.txt.gz";
+    QFileInfoList fileInfoList = QDir(m_ratesDirPath).entryInfoList(nameFilter, QDir::Dirs | QDir::Files
+                                                                 | QDir::NoSymLinks | QDir::NoDot
+                                                                 | QDir::NoDotDot);
+    QStringList pathList;
+    for (auto &fileInfo : fileInfoList) {
+        QMap <QString, float> ratesMap;
+        QString allRatesKey = fileInfo.baseName().toUpper();
+        QFile file(fileInfo.absoluteFilePath());
+        if (file.open(QIODevice::ReadOnly)) {
+            QStringList fileLineList;
+            QTextStream textStream(&file);
+            QString previousDate = "";
+            float rateTotal = 0;
+            int rateCounter = 0;
+            while (true) {
+                QString line = textStream.readLine();
+                if (line.isNull())
+                    break;
+                else {
+                    fileLineList.append(line);
+                    if (line.left(10) == previousDate) {
+                        rateTotal += line.right(line.length() - 11).toFloat();
+                        rateCounter++;
+                        previousDate = line.left(10);
+                    } else {
+                        if(previousDate != "")
+                            ratesMap.insert(previousDate, rateTotal/rateCounter);
+                        ratesMap.insert(line.left(10), line.right(line.length() - 11).toFloat());
+                        previousDate = line.left(10);
+                        rateCounter = 1;
+                        rateTotal = line.right(line.length() - 11).toFloat();
+                    }
+                    ratesMap.insert(line.left(10), line.right(line.length() - 11).toFloat());
                 }
-                else
-                {
-                    if(previousDate != "")
-                    ratesPerCurrencyMap.insert(previousDate, rateTotal/rateCounter);
-                    ratesPerCurrencyMap.insert(line.left(10), line.right(line.length() - 11).toFloat());
-                    previousDate = line.left(10);
-                    rateCounter = 1;
-                    rateTotal = line.right(line.length() - 11).toFloat();
-                }
-                ratesPerCurrencyMap.insert(line.left(10), line.right(line.length() - 11).toFloat());
             }
-
         }
-        mAllRatesMap.insert(allRatesKey, ratesPerCurrencyMap);
+
+
+        mAllRatesMap.insert(allRatesKey, ratesMap);
     }
-//    foreach( QString key, mAllRatesMap.keys() )
-//    {
-//        qDebug() << key << mAllRatesMap.value(key);
-//        QMap <QString, float> testMap = mAllRatesMap.value(key);
-//        foreach (QString key2, testMap.keys())
-//        {
-//            qDebug() << key2 << testMap.value(key2);
-//        }
-//    }
 }
 
 QStringList* AppController::getAuthorList()
@@ -699,12 +653,12 @@ void AppController::populateAllSaleItemList(QMap<QString, QList<SaleItem *>* >* 
     while (true)
     {
         QString line = textStream.readLine();
-//        if (line.contains("	-"))
-//        {
-//            QApplication::restoreOverrideCursor();
-//            QMessageBox::warning(mainwindow, "Warning", "There are negative revenues! Check the \"Revenue\" column.");
-//            QApplication::setOverrideCursor(Qt::WaitCursor);
-//        }
+        //        if (line.contains("	-"))
+        //        {
+        //            QApplication::restoreOverrideCursor();
+        //            QMessageBox::warning(mainwindow, "Warning", "There are negative revenues! Check the \"Revenue\" column.");
+        //            QApplication::setOverrideCursor(Qt::WaitCursor);
+        //        }
         if (line.isNull())
             break;
         else
@@ -735,16 +689,16 @@ void AppController::populateAllSaleItemList(QMap<QString, QList<SaleItem *>* >* 
             authorValue = "Wings Systems";
         }
         qDebug() << *saleItemsPerAuthorMap;
-//        if (!(*saleItemsPerAuthorMap).contains(authorValue))// && skuString != "M00Edit_Module" && skuString != "J00Edit_Module" && skuString != "M01Text_Module" && skuString != "J01Text_Module")
-//        {
-//            if(!request->authorSingularList->contains(authorValue))
-//            {
-//                QApplication::restoreOverrideCursor();
-//                QMessageBox::warning(mainwindow, "Warning", "The following uknown authors has been found: \"" + authorValue + "\"");
-//                QApplication::setOverrideCursor(Qt::WaitCursor);
-//            }
-//            continue;
-//        }
+        //        if (!(*saleItemsPerAuthorMap).contains(authorValue))// && skuString != "M00Edit_Module" && skuString != "J00Edit_Module" && skuString != "M01Text_Module" && skuString != "J01Text_Module")
+        //        {
+        //            if(!request->authorSingularList->contains(authorValue))
+        //            {
+        //                QApplication::restoreOverrideCursor();
+        //                QMessageBox::warning(mainwindow, "Warning", "The following uknown authors has been found: \"" + authorValue + "\"");
+        //                QApplication::setOverrideCursor(Qt::WaitCursor);
+        //            }
+        //            continue;
+        //        }
 
 
         //qDebug() << authorValue;
@@ -753,7 +707,7 @@ void AppController::populateAllSaleItemList(QMap<QString, QList<SaleItem *>* >* 
 
         saleItem->provider = QString::fromStdString(list[0].toStdString()).replace("	", "");
         saleItem->providerCountry = QString::fromStdString(list[1].toStdString()).replace("	", "");
-//        QString skuString = QString::fromStdString(list[2].toStdString()).replace("	", "");
+        //        QString skuString = QString::fromStdString(list[2].toStdString()).replace("	", "");
         saleItem->sku = skuString;
         saleItem->developer = QString::fromStdString(list[3].toStdString()).replace("	", "");
         QString titleString = QString::fromStdString(list[4].toStdString()).replace("	", "");
@@ -777,7 +731,7 @@ void AppController::populateAllSaleItemList(QMap<QString, QList<SaleItem *>* >* 
         int sign = 1;
         if (units.toInt() < 0) sign = -1;
         float developerProceeds = sign * developerProceedsString.toFloat()/0.7;
-       // if (developerProceeds <0) qDebug() << "saleItem->developerProceeds" << developerProceeds;
+        // if (developerProceeds <0) qDebug() << "saleItem->developerProceeds" << developerProceeds;
 
         saleItem->developerProceeds = developerProceeds;
         QString beginDate = QString::fromStdString(list[9].toStdString()).replace("	", "");
@@ -838,14 +792,14 @@ void AppController::populateAllSaleItemList(QMap<QString, QList<SaleItem *>* >* 
             }
         }
 
-//        if (productTypeIdentifier == "FI1")
-//        {
-//            realNameString = realNameString.append(" (Mac)");
-//        }
-//        else if (productTypeIdentifier == "IA1" ||productTypeIdentifier == "IA9" || productTypeIdentifier == "IAY" || productTypeIdentifier == "IAC")
-//        {
-//            realNameString = realNameString.append(" (iOS)");
-//        }
+        //        if (productTypeIdentifier == "FI1")
+        //        {
+        //            realNameString = realNameString.append(" (Mac)");
+        //        }
+        //        else if (productTypeIdentifier == "IA1" ||productTypeIdentifier == "IA9" || productTypeIdentifier == "IAY" || productTypeIdentifier == "IAC")
+        //        {
+        //            realNameString = realNameString.append(" (iOS)");
+        //        }
 
         if (productTypeIdentifier == "7" || productTypeIdentifier == "7F" || productTypeIdentifier == "7T" || productTypeIdentifier == "F7")
         {
@@ -913,11 +867,11 @@ void AppController::populateAllSaleItemList(QMap<QString, QList<SaleItem *>* >* 
 
         saleItem->developerProceedsinEuros = developerProceeds*rate;
 
-//        //Check if the Revenue is negative and append to Comments
-//        if (customerPrice < 0)
-//        {
-//            mCommentString.append(authorValue + "'s " +  realNameString + " on " + beginDate + ", ");
-//        }
+        //        //Check if the Revenue is negative and append to Comments
+        //        if (customerPrice < 0)
+        //        {
+        //            mCommentString.append(authorValue + "'s " +  realNameString + " on " + beginDate + ", ");
+        //        }
     }
 
     destinationFile.close();

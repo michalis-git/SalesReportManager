@@ -22,7 +22,7 @@ public:
     HttpRequest *request, *artisticRequest, *request1, *exchangeRatesRequest;
     QString mDirectory, mCommentString;
     DailyReport *mDailyReport;
-    QString mExchangeRatesDirPath;
+    QString m_ratesDirPath;
     QString m_dailyReportsDirPath;
     QList <QDate> mAllDatesList;
     QStringList mAllCurrenciesList;
@@ -53,7 +53,6 @@ public:
     QString dailyReportsDirPath();
 
 private:
-    QStringList getPathsList(QString directoryString);
 //    void populateAllSaleItemList(QList <SaleItem*>* allSaleItemList, QDate *date);
     void populateAllSaleItemList(QMap<QString, QList<SaleItem *> *> *saleItemsPerAuthorMap, QDate *date, MainWindow *mainwindow);
 //    void createExchangeRateFiles(QList <QDate> dateOfReportList, MainWindow *mainwindow);
