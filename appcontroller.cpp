@@ -173,27 +173,6 @@ QString AppController::getMissingDates(QList <QDate> list)
   return message;
 }
 
-int AppController::onDateClicked(QDate date) {
-  createDayReport(date);
-  int numberOfRows = mDailyReport->providerList.count();
-
-  dayReportModel(date);
-
-  return numberOfRows;
-}
-
-// delme (replaced by dayReportModel)
-void AppController::createDayReport(QDate date) {
-  QString destinationPath = unpackDailyReportFile(date);
-  QFile destinationFile(destinationPath);
-
-     //Parse the selected DailyReport file and create the DailyReport object.
-  parseDailyReport(&destinationFile, date);
-
-     // Remove temporary file after DailyReport object is created.
-  destinationFile.remove();
-}
-
 QStandardItemModel *AppController::dayReportModel(const QDate &date) {
     //TODO: resolve memory leak
     QStandardItemModel *model = new QStandardItemModel;
@@ -237,7 +216,7 @@ QStandardItemModel *AppController::dayReportModel(const QDate &date) {
       for (int j = 0; j < list.count(); j++) {
           QStandardItem *item = new QStandardItem;
           item->setText(list[j]);
-          model->setItem(i, j, item);
+          model->setItem(i - 1, j, item);
       }
 //      if (authorValue == "DRAWings Snap"){authorList << "Wings Systems";}
 //      else {
@@ -432,165 +411,6 @@ QByteArray AppController::gzipDecompress(QByteArray &compressData ) {
 
   return uncompressed;
 }
-
-void AppController::parseDailyReport(QFile *file, QDate date) {
-  mDailyReport = new DailyReport;
-
-  file->open(QIODevice::ReadOnly);
-  QStringList fileLineList;
-  QTextStream textStream(file);
-  while (true)
-  {
-    QString line = textStream.readLine();
-    if (line.contains("	-")) { qDebug() << "negative revenue"; }
-    if (line.isNull())
-      break;
-    else
-      fileLineList.append(line);
-  }
-
-  QStringList providerList, providerCountryList, skuList, authorList, developerList, titleList,
-      versionList, productTypeIdentifierList, beginDateList, endDateList, customerCurrencyList,
-      countryCodeList, currencyOfProceedsList, parentIdentifierList, realNameList;
-  QVector<int> unitsList;
-  QVector<float> developerProceedsList;
-  QVector<int> appleIdentifierList;
-  QVector<float>customerPriceList;
-
-  for (int i = 1; i < fileLineList.size(); ++i)
-  {
-    std::string t = fileLineList.at(i).toLocal8Bit().constData();
-    QString s = QString::fromStdString(t);
-    QRegExp rx("((\\w|[.]|[/]|[ ]|[-])+(\\t))");
-    QStringList list;
-    int pos = 0;
-
-    while ((pos = rx.indexIn(s, pos)) != -1) {
-      list << rx.cap(1);
-      pos += rx.matchedLength();
-    }
-
-    providerList << QString::fromStdString(list[0].toStdString()).replace("	", "");
-    providerCountryList << QString::fromStdString(list[1].toStdString()).replace("	", "");
-    QString skuString = QString::fromStdString(list[2].toStdString()).replace("	", "");
-    skuList << skuString;
-    QString titleString = QString::fromStdString(list[4].toStdString()).replace("	", "");
-    QString authorValue = titleString;
-    if (authorValue == "DRAWings Snap"){authorList << "Wings Systems";}
-    else {
-      authorList << request->designsAuthors.value(authorValue);
-    }
-    developerList << QString::fromStdString(list[3].toStdString()).replace("	", "");
-    titleList << QString::fromStdString(list[4].toStdString()).replace("	", "");
-    versionList << QString::fromStdString(list[5].toStdString()).replace("	", "");
-    productTypeIdentifierList << QString::fromStdString(list[6].toStdString()).replace("	", "");
-    unitsList << list[7].toInt();
-
-    QString developerProceedsString = list[8].replace("	", "");
-    if (developerProceedsString.left(1) == ".")
-    {
-      developerProceedsString = "0" +developerProceedsString;
-    }
-    developerProceedsList << developerProceedsString.toFloat();
-
-    QString beginDateString = QString::fromStdString(list[9].toStdString());
-    beginDateString.replace("	", "");
-    beginDateList << beginDateString;
-    QString endDateString = QString::fromStdString(list[10].toStdString());
-    endDateString.replace("	", "");
-    endDateList << endDateString;
-
-    customerCurrencyList << QString::fromStdString(list[11].toStdString()).replace("	", "");
-    countryCodeList << QString::fromStdString(list[12].toStdString()).replace("	", "");
-    QString currencyOfProceedsString =  QString::fromStdString(list[13].toStdString()).replace("	", "");
-    currencyOfProceedsList << currencyOfProceedsString;
-    appleIdentifierList << list[14].toInt();
-
-    QString customerPriceString = list[15].replace("	", "");
-    if (customerPriceString.left(1) == ".")
-    {
-      customerPriceString = "0" +customerPriceString;
-    }
-    customerPriceList << customerPriceString.toFloat();
-    if (list.count() > 17) {
-      QString parentIdentifier = QString::fromStdString(list[17].toStdString()).replace("	", "");
-      parentIdentifierList << parentIdentifier;
-    }
-
-
-       //        QString realNameString = titleString;
-       //        if (parentIdentifierString.isEmpty())
-       //        {
-       //            if (skuString == "DRAWings.Snap.X001")
-       //            {
-       //                realNameList << "MacDRAWings";
-       //                //parentIdentifierString = "-";
-       //            }
-       //            else
-       //            {
-       //                realNameList << "Drawings Snap";
-       //                //parentIdentifierString = "-";
-       //            }
-       //        }
-       //        else
-       //        {
-       //            if (titleString == "00Edit_Module" | titleString == "M00Edit_Module")
-       //            {
-       //                realNameList << "Editing Module";
-       //            }
-       //            else if (titleString == "DRAWings Snap")
-       //            {
-       //                realNameList << "sss";
-       //            }
-       //            else
-       //            {
-       //                QString formatedName = titleString.left(titleString.length() - 8);
-       //                if (formatedName.right(1) == ("_"))
-       //                {
-       //                    formatedName = formatedName.left(formatedName.length() - 1);
-       //                    formatedName.append(" (Pack.) ");
-       //                }
-       //                realNameList << formatedName;
-       //            }
-       //        }
-       //        if (parentIdentifierList.right(4) == "X001")
-       //        {
-       //            parentIdentifierList = "MacDRAWings";
-       //        }
-       //        else if (parentIdentifierList.right(4) == ".001")
-       //        {
-       //            parentIdentifierList = "Drawings Snap";
-       //        }
-       //        else
-       //        {
-       //            parentIdentifierList = "-";
-       //        }
-  }
-  file->close();
-
-  mDailyReport->setDate(&date);
-  mDailyReport->providerList = providerList;
-  mDailyReport->providerCountryList = providerCountryList;
-  mDailyReport->skuList = skuList;
-  mDailyReport->authorNameList = authorList;
-  mDailyReport->developerList = developerList;
-  mDailyReport->titleList = titleList;
-  mDailyReport->versionList = versionList;
-  mDailyReport->productTypeIdentifierList = productTypeIdentifierList;
-  mDailyReport->unitsList = unitsList;
-  mDailyReport->developerProceedsList = developerProceedsList;
-  mDailyReport->beginDateList = beginDateList;
-  mDailyReport->endDateList = endDateList;
-  mDailyReport->customerCurrencyList = customerCurrencyList;
-  mDailyReport->countryCodeList = countryCodeList;
-  mDailyReport->currencyOfProceedsList = currencyOfProceedsList;
-  mDailyReport->appleIdentifierList = appleIdentifierList;
-  mDailyReport->customerPriceList = customerPriceList;
-  mDailyReport->parentIdentifierList = parentIdentifierList;
-  mDailyReport->realNameList = realNameList;
-  // maDailyReport is deleted in mainwindow, after its data are loaded on a table.
-}
-
 
 QStringList* AppController::getAuthorList() {
   return request->authorSingularList;

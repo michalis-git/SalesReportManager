@@ -160,6 +160,7 @@ void MainWindow::onDateClicked(QDate date) {
         return;
     }
 
+    //TODOS
     // Checks if there are Daily Report Files for the selected date.
     if(!mAppController->isDailyReport(date)) {
         QMessageBox::warning( this, "Warning", "You should select only the yellow dates." );

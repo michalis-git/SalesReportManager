@@ -31,7 +31,7 @@ public:
 
     QList <QDate> readFilesFromDirectory(MainWindow *mainwindow, QString path);
     QList <QDate> onBrowseClicked(MainWindow *mainwindow);
-    int onDateClicked(QDate date);
+
 //    QList <SaleItem*> onBalanceSheetSelected(MainWindow* mainwindow, QDate sinceDate, QDate untilDate, QString *missingDatesMessage);
     void populateSaleItemsPerAuthorMap(QMap <QString, QList <SaleItem*>* > *saleItemsPerAuthorList, MainWindow* mainwindow, QDate sinceDate, QDate untilDate, QStringList authorsSelectedList, QString *missingDatesMessage);
     void onSubsidiarySheetSelected(QMap <QString, QList <SaleItem*>* > *saleItemsPerAuthorList, MainWindow* mainwindow, QDate sinceDate, QDate untilDate, QStringList authorsSelectedList, QString *missingDatesMessage);
@@ -43,10 +43,9 @@ public:
     QString getMissingDates(QList <QDate> list);
 //    QString getMissingDates1(QDate* sinceDate, QDate* untilDate);
     bool isDailyReport(QDate date);
-    void createDayReport(QDate date);
+
     QStandardItemModel *dayReportModel(const QDate &date);
     QByteArray gzipDecompress(QByteArray &compressData);
-    void parseDailyReport(QFile *file, QDate date);
     QString unpackDailyReportFile(QDate date);
     QStringList *getAuthorList();
     QString getBrowsedPath(MainWindow* mainwindow);
