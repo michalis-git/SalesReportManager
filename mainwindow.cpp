@@ -71,7 +71,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->toDateEdit->setCalendarWidget(toCalendarWidget);
 
 
-    initializeTableView();
 }
 
 MainWindow::~MainWindow() {
@@ -80,25 +79,6 @@ MainWindow::~MainWindow() {
     delete m_dailyModel;
     delete fromCalendarWidget;
     delete toCalendarWidget;
-}
-
-void MainWindow::initializeTableView() {
- //TODO: populate titleList from file
-    // Initialize Tableview
-        QStringList titleList;
-        titleList << "Provider" << "Provider Country" << "SKU" << "Developer" << "Title" << "Version" << "Type Identifier"
-                  << "Units" << "Developer Proceeds" << "Begin Date" << "End Date" << "Customer Currency "<< "Country Code"
-                  << "Currency of Proceeds" << "Apple Identifier" << "Customer Prise" << "Author";
-        m_dailyModel = new QStandardItemModel(10,titleList.count(),this);
-        for (int i = 0; i < titleList.count(); i++) {
-            QStandardItem *item = new QStandardItem(titleList[i]);
-            m_dailyModel->setHorizontalHeaderItem(i, item);
-    //        delete
-        }
-        ui->tableView->setModel(m_dailyModel);
-        ui->tableView->resizeColumnsToContents();
-        this->setEnabled(false);
-        QApplication::setOverrideCursor(Qt::WaitCursor);
 }
 
 void MainWindow::onListWidgetItemClicked(QListWidgetItem* item) {
@@ -153,7 +133,6 @@ void MainWindow::onBrowseClicked()
 }
 
 void MainWindow::onDateClicked(QDate date) {
-    clearTable(ui->tableView);
     if (mAppController->mAllDatesList.isEmpty()) {
         QMessageBox::warning( this, "Warning",
                               "There are no daily report files loaded. Please, browse the directory that contains them." );
@@ -167,19 +146,9 @@ void MainWindow::onDateClicked(QDate date) {
         return;
     }
 
-    int numberOfRows = mAppController->onDateClicked(date);
-    populateTable(numberOfRows);
-
     QStandardItemModel *model = mAppController->dayReportModel(date);
-//    if (model && model->rowCount())
-        ui->dayTableView->setModel(model);
-}
-
-void MainWindow::clearTable(QTableView* table) {
-    while (table->model()->rowCount() > 0) {
-        table->model()->removeRow(0);
-    }
-    table->resizeColumnsToContents();
+    ui->dayTableView->setModel(model);
+    ui->dayTableView->resizeColumnsToContents();
 }
 
 void MainWindow::clearCalendars() {
@@ -195,52 +164,6 @@ void MainWindow::clearCalendars() {
         fromCalendarWidget->setDateTextFormat(mAppController->mAllDatesList[i], keywordFormat);
         toCalendarWidget->setDateTextFormat(mAppController->mAllDatesList[i], keywordFormat);
     }
-}
-
-void MainWindow::populateTable(int j) {
-    DailyReport *report = mAppController->mDailyReport;
-    populateTableWithList((report->providerList), 0, j);
-    populateTableWithList((report->providerCountryList), 1, j);
-    populateTableWithList((report->skuList), 2, j);
-    populateTableWithList((report->developerList), 3, j);
-    populateTableWithList((report->titleList), 4, j);
-    populateTableWithList((report->versionList), 5, j);
-    populateTableWithList((report->productTypeIdentifierList), 6, j);
-    populateTableWithVectorOfInts((report->unitsList), 7, j);
-    populateTableWithVectorOfFloats((report->developerProceedsList), 8, j);
-    populateTableWithList((report->beginDateList), 9, j);
-    populateTableWithList((report->endDateList), 10, j);
-    populateTableWithList((report->customerCurrencyList), 11, j);
-    populateTableWithList((report->countryCodeList), 12, j);
-    populateTableWithList((report->currencyOfProceedsList), 13, j);
-    populateTableWithVectorOfInts((report->appleIdentifierList), 14, j);
-    populateTableWithVectorOfFloats((report->customerPriceList), 15, j);
-    populateTableWithList((report->authorNameList), 16, j);
-    //populateTableWithList((report->parentIdentifierList), 17, j);
-    delete report;
-}
-
-void MainWindow::populateTableWithList(QStringList list, int indexOfColumn, int numberOfRows) {
-    for(int i = 0; i < numberOfRows ; i++) {
-        m_dailyModel->setItem(i, indexOfColumn, new QStandardItem(list[i]));
-    }
-    ui->tableView->resizeColumnsToContents();
-}
-
-void MainWindow::populateTableWithVectorOfInts(QVector <int> vector, int indexOfColumn, int numberOfRows) {
-    for(int i = 0; i < numberOfRows ; i++) {
-        m_dailyModel->setItem(i, indexOfColumn, new QStandardItem(QString::number(vector[i])));
-    }
-    ui->tableView->resizeColumnsToContents();
-}
-
-void MainWindow::populateTableWithVectorOfFloats(QVector <float> vector, int indexOfColumn, int numberOfRows) {
-    for(int i = 0; i < numberOfRows ; i++)
-    {
-        m_dailyModel->setItem(i, indexOfColumn, new QStandardItem(QString::number(vector[i])));
-
-    }
-    ui->tableView->resizeColumnsToContents();
 }
 
 void MainWindow::onDoneClicked() {
@@ -419,9 +342,7 @@ void MainWindow::populateReportSheet(QDate fromDate, QDate toDate, QString messa
                 appleRevenueTotal += eurosOfItems * 0.7;
                 wingsRevenueTotal += eurosOfItems * wingsPercentage;
                 designerRevenueTotal += eurosOfItems * (0.7 - wingsPercentage);
-            }
-            else
-            {
+            } else {
                 if (!ui->minReportsCheckBox->isChecked())
                 balanceSheetRep->appendLineinTable(previousDesignName, previousParent, numOfItemsPerCurrency, moneyOfItemsPerCurrency, previousCurrency, eurosOfItemsPerCurrency, prevWingsPercentage);
                 balanceSheetRep->appendTotalPerDesignInTable(previousDesignName, previousParent, numOfItemsPerDesign, eurosOfItemsPerDesign, prevWingsPercentage);

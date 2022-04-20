@@ -24,6 +24,7 @@ SOURCES += main.cpp\
     appcontroller.cpp \
     httprequest.cpp \
     currency.cpp \
+  purchase.cpp \
     saleitem.cpp \
     reports/subsidiaryledgerrep.cpp \
     reports/bycountryrep.cpp \
@@ -36,6 +37,7 @@ HEADERS  += mainwindow.h \
     appcontroller.h \
     currency.h \
     exchangerates.h \
+    purchase.h \
     saleitem.h \
     httprequest.h \
     reports/subsidiaryledgerrep.h \

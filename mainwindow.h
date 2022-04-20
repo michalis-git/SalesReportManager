@@ -40,11 +40,7 @@ private:
     ByCountryRep *byCountryRep;
 
     void findMissingDates(QStringList list);
-    void populateTable(int j);
-    void clearTable(QTableView *table);
-    void populateTableWithList(QStringList list, int indexOfColumn, int numberOfRows);
-    void populateTableWithVectorOfInts(QVector<int> vector, int indexOfColumn, int numberOfRows);
-    void populateTableWithVectorOfFloats(QVector<float> vector, int indexOfColumn, int numberOfRows);
+
 
     void populateReportSheet(QDate fromDate, QDate toDate, QString message, QMap <QString, QList<SaleItem*>* >);
     void populateSubsidiaryLedgerRep(QDate fromDate, QDate toDate, QString message, QMap <QString, QList<SaleItem*>* >);
@@ -53,7 +49,7 @@ private:
     QStringList populateAuthorsSelectedList();
     void upDateCalendars(QList<QDate> dateOfReportList);
     void clearCalendars();
-    void initializeTableView();
+
 
 
 private slots:
