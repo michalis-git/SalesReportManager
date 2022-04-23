@@ -26,6 +26,7 @@ SOURCES += main.cpp\
     currency.cpp \
   property.cpp \
   purchase.cpp \
+  purchases.cpp \
     saleitem.cpp \
     reports/subsidiaryledgerrep.cpp \
     reports/bycountryrep.cpp \
@@ -40,6 +41,7 @@ HEADERS  += mainwindow.h \
     exchangerates.h \
     property.h \
     purchase.h \
+    purchases.h \
     saleitem.h \
     httprequest.h \
     reports/subsidiaryledgerrep.h \

@@ -3,59 +3,59 @@
 
 #include <QString>
 
-    //   // "Provider"
-    //QString m_provider;
-    //// "Provider Country"
-    //QString m_providerCountry;
-    //// "SKU"
-    //QString m_sku;
-    //// "Developer"
-    //QString m_developer;
-    //// "Title"
-    //QString m_title;
-    //// "Version"
-    //QString m_version;
-    //// "Product Type Identifier"
-    //QString m_prodTypeIdentfier;
-    //// "Units"
-    //QString m_units;
-    //// "Developer Proceeds
-    //QString m_devProceeds;
-    //// Begin Date
-    //QDate m_beginDate;
-    //// End Date
-    //QDate m_endDate;
-    //// Customer Currency
-    //QString m_customerCurrency;
-    //// Country Code
-    //QString m_countryCode;
-    //// Currency of Proceeds
-    //QString m_currencyOfProceeds;
-    //// Apple Identifier
-    //QString m_appleIdentifier;
-    //// Customer Price
-    //float m_customerPrice = 0;
-    //// Promo Code
-    //QString m_promoCode;
-    //// Parent Identifier
-    //QString m_parentIdentifier;
-    //// Subscription
-    //QString m_subscription;
-    //// Period
-    //QString m_period;
-    //// Category
-    //QString m_category;
-    //// CMB"
-    //QString mCMB;
+//   // "Provider"
+//QString m_provider;
+//// "Provider Country"
+//QString m_providerCountry;
+//// "SKU"
+//QString m_sku;
+//// "Developer"
+//QString m_developer;
+//// "Title"
+//QString m_title;
+//// "Version"
+//QString m_version;
+//// "Product Type Identifier"
+//QString m_prodTypeIdentfier;
+//// "Units"
+//QString m_units;
+//// "Developer Proceeds
+//QString m_devProceeds;
+//// Begin Date
+//QDate m_beginDate;
+//// End Date
+//QDate m_endDate;
+//// Customer Currency
+//QString m_customerCurrency;
+//// Country Code
+//QString m_countryCode;
+//// Currency of Proceeds
+//QString m_currencyOfProceeds;
+//// Apple Identifier
+//QString m_appleIdentifier;
+//// Customer Price
+//float m_customerPrice = 0;
+//// Promo Code
+//QString m_promoCode;
+//// Parent Identifier
+//QString m_parentIdentifier;
+//// Subscription
+//QString m_subscription;
+//// Period
+//QString m_period;
+//// Category
+//QString m_category;
+//// CMB"
+//QString mCMB;
 
 
 
-    class Property
+class Property
 {
 public:
-  enum DataType { STRING, FLOAT };
+    enum DataType { STRING, FLOAT, DATE };
 
-      enum Name {
+    enum PropertyName {
         PROVIDER,
         PROVIDER_COUNTRY,
         SKU,
@@ -78,17 +78,24 @@ public:
         PERIOD,
         CATEGORY,
         CMB,
-      };
+    };
 
 
 private:
-  QString m_title;
-  QString m_stringValue;
-  DataType m_dataType;
+    PropertyName m_propertyName;
+    QString m_stringValue;
+    QString m_name;
+    DataType m_dataType;
+    DataType dataTypeFromPropertyName(PropertyName name);
 
 public:
-  Property(const QString &title, const QString &stringValue, const DataType &dataType)
-      : m_title(title), m_stringValue(stringValue), m_dataType(dataType) {};
+    Property(const PropertyName &propertyName, const QString &stringValue);
+    Property() = default;
+    static QString nameFromPropertyName(PropertyName name);
+    PropertyName propertyName() const;
+    const QString &stringValue() const;
+    const QString &name() const;
+    Property::DataType dataType() const;
 };
 
 #endif // PROPERTY_H

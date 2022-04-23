@@ -2,6 +2,7 @@
 #include "httprequest.h"
 #include "saleitem.h"
 #include "mainwindow.h"
+#include "purchases.h"
 
 #include <QDebug>
 #include <QStringList>
@@ -177,68 +178,71 @@ QStandardItemModel *AppController::dayReportModel(const QDate &date) {
     //TODO: resolve memory leak
     QStandardItemModel *model = new QStandardItemModel;
     QString decompressedPath = unpackDailyReportFile(date);
-    QFile file(decompressedPath);
+    Purchases *purchases = new Purchases(date, decompressedPath);
+    qDebug() << purchases->purchasesModel()->rowCount();
+    return purchases->purchasesModel();
+//    QFile file(decompressedPath);
 
-    if (file.open(QIODevice::ReadOnly)) {
-    QStringList fileLineList;
-    QTextStream textStream(&file);
-    while (true) {
-      QString line = textStream.readLine();
-      if (line.contains("	-"))
-          qDebug() << "negative revenue";
-      if (line.isNull())
-        break;
-      else
-        fileLineList.append(line);
-    }
+//    if (file.open(QIODevice::ReadOnly)) {
+//    QStringList fileLineList;
+//    QTextStream textStream(&file);
+//    while (true) {
+//      QString line = textStream.readLine();
+//      if (line.contains("	-"))
+//          qDebug() << "negative revenue";
+//      if (line.isNull())
+//        break;
+//      else
+//        fileLineList.append(line);
+//    }
 
 
-    QStringList titles = fileLineList.first().split("\t");
-    qDebug() << titles;
-    for (int i = 0; i< titles.count(); i++) {
-        QStandardItem *headerItem = new QStandardItem;
-        headerItem->setText(titles[i]);
-        model->setHorizontalHeaderItem(i, headerItem);
-    }
+//    QStringList titles = fileLineList.first().split("\t");
+//    qDebug() << titles;
+//    for (int i = 0; i< titles.count(); i++) {
+//        QStandardItem *headerItem = new QStandardItem;
+//        headerItem->setText(titles[i]);
+//        model->setHorizontalHeaderItem(i, headerItem);
+//    }
 
-    for (int i = 1; i < fileLineList.size(); ++i) {
-      std::string t = fileLineList.at(i).toLocal8Bit().constData();
-      QString s = QString::fromStdString(t);
-      QRegExp rx("((\\w|[.]|[/]|[ ]|[-])+(\\t))");
-      QStringList list;
-      int pos = 0;
+//    for (int i = 1; i < fileLineList.size(); ++i) {
+//      std::string t = fileLineList.at(i).toLocal8Bit().constData();
+//      QString s = QString::fromStdString(t);
+//      QRegExp rx("((\\w|[.]|[/]|[ ]|[-])+(\\t))");
+//      QStringList list;
+//      int pos = 0;
 
-      while ((pos = rx.indexIn(s, pos)) != -1) {
-        list << rx.cap(1);
-        pos += rx.matchedLength();
-      }
-
-      for (int j = 0; j < list.count(); j++) {
-          QStandardItem *item = new QStandardItem;
-          item->setText(list[j]);
-          model->setItem(i - 1, j, item);
-      }
-//      if (authorValue == "DRAWings Snap"){authorList << "Wings Systems";}
-//      else {
-//        authorList << request->designsAuthors.value(authorValue);
+//      while ((pos = rx.indexIn(s, pos)) != -1) {
+//        list << rx.cap(1);
+//        pos += rx.matchedLength();
 //      }
-//      QString developerProceedsString = list[8].replace("	", "");
-//      if (developerProceedsString.left(1) == ".")
-//      {
-//        developerProceedsString = "0" +developerProceedsString;
-//      }
-//      developerProceedsList << developerProceedsString.toFloat();
 
-//      QString customerPriceString = list[15].replace("	", "");
-//      if (customerPriceString.left(1) == ".")
-//      {
-//        customerPriceString = "0" +customerPriceString;
+//      for (int j = 0; j < list.count(); j++) {
+//          QStandardItem *item = new QStandardItem;
+//          item->setText(list[j]);
+//          model->setItem(i - 1, j, item);
 //      }
-//      customerPriceList << customerPriceString.toFloat();
-    }
-    file.close();
+////      if (authorValue == "DRAWings Snap"){authorList << "Wings Systems";}
+////      else {
+////        authorList << request->designsAuthors.value(authorValue);
+////      }
+////      QString developerProceedsString = list[8].replace("	", "");
+////      if (developerProceedsString.left(1) == ".")
+////      {
+////        developerProceedsString = "0" +developerProceedsString;
+////      }
+////      developerProceedsList << developerProceedsString.toFloat();
 
-    }
+////      QString customerPriceString = list[15].replace("	", "");
+////      if (customerPriceString.left(1) == ".")
+////      {
+////        customerPriceString = "0" +customerPriceString;
+////      }
+////      customerPriceList << customerPriceString.toFloat();
+//    }
+//    file.close();
+
+//    }
     return model;
 }
 
@@ -339,8 +343,7 @@ QString AppController::unpackDailyReportFile(QDate date) {
 
      //Create tmp folder
   QString folderPath = QDir::home().path() + "/tmpApplReports";
-  if (!QDir(folderPath).exists())
-  {
+  if (!QDir(folderPath).exists()) {
     QDir().mkdir(folderPath);
   }
   QString destinationFilePath = folderPath + "/" + dateStr + ".txt";
