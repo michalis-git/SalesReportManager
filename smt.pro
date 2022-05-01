@@ -18,6 +18,7 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
+  decompresser.cpp \
   exchangerates.cpp \
         mainwindow.cpp \
     dailyreport.cpp \
@@ -38,6 +39,7 @@ HEADERS  += mainwindow.h \
     dailyreport.h \
     appcontroller.h \
     currency.h \
+    decompresser.h \
     exchangerates.h \
     property.h \
     purchase.h \

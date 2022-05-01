@@ -45,7 +45,6 @@ public:
     bool isDailyReport(QDate date);
 
     QStandardItemModel *dayReportModel(const QDate &date);
-    QByteArray gzipDecompress(QByteArray &compressData);
     QString unpackDailyReportFile(QDate date);
     QStringList *getAuthorList();
     QString getBrowsedPath(MainWindow* mainwindow);

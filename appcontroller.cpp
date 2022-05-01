@@ -3,6 +3,7 @@
 #include "saleitem.h"
 #include "mainwindow.h"
 #include "purchases.h"
+#include "decompresser.h"
 
 #include <QDebug>
 #include <QStringList>
@@ -181,47 +182,6 @@ QStandardItemModel *AppController::dayReportModel(const QDate &date) {
     Purchases *purchases = new Purchases(date, decompressedPath);
     qDebug() << purchases->purchasesModel()->rowCount();
     return purchases->purchasesModel();
-//    QFile file(decompressedPath);
-
-//    if (file.open(QIODevice::ReadOnly)) {
-//    QStringList fileLineList;
-//    QTextStream textStream(&file);
-//    while (true) {
-//      QString line = textStream.readLine();
-//      if (line.contains("	-"))
-//          qDebug() << "negative revenue";
-//      if (line.isNull())
-//        break;
-//      else
-//        fileLineList.append(line);
-//    }
-
-
-//    QStringList titles = fileLineList.first().split("\t");
-//    qDebug() << titles;
-//    for (int i = 0; i< titles.count(); i++) {
-//        QStandardItem *headerItem = new QStandardItem;
-//        headerItem->setText(titles[i]);
-//        model->setHorizontalHeaderItem(i, headerItem);
-//    }
-
-//    for (int i = 1; i < fileLineList.size(); ++i) {
-//      std::string t = fileLineList.at(i).toLocal8Bit().constData();
-//      QString s = QString::fromStdString(t);
-//      QRegExp rx("((\\w|[.]|[/]|[ ]|[-])+(\\t))");
-//      QStringList list;
-//      int pos = 0;
-
-//      while ((pos = rx.indexIn(s, pos)) != -1) {
-//        list << rx.cap(1);
-//        pos += rx.matchedLength();
-//      }
-
-//      for (int j = 0; j < list.count(); j++) {
-//          QStandardItem *item = new QStandardItem;
-//          item->setText(list[j]);
-//          model->setItem(i - 1, j, item);
-//      }
 ////      if (authorValue == "DRAWings Snap"){authorList << "Wings Systems";}
 ////      else {
 ////        authorList << request->designsAuthors.value(authorValue);
@@ -319,41 +279,18 @@ QString AppController::unpackDailyReportFile(QDate date) {
   QStringList nameFilter;
   QStringList list;
   nameFilter << "*" + dateStr+ ".txt.gz";
-  QDir dir(mDirectory);
+  QDir dir(m_dailyReportsDirPath);
 
-  list = dir.entryList(nameFilter, QDir::Files);
-  QString fullFilePath = mDirectory + "/" + list.first();
+  QFileInfoList fileInfoList = dir.entryInfoList(nameFilter, QDir::Files);
+  QString compressedFilePath;
+  if (fileInfoList.count())
+      compressedFilePath = fileInfoList.first().absoluteFilePath();
+  else
+      qDebug() << "Error! No report file for date" << date;
 
-     // Decompresses the file in temporary file.
-  QFile sourceFile(fullFilePath);
-  QByteArray sourceData;
-
-  if(sourceFile.open(QIODevice::ReadOnly))
-  {
-    QDataStream in1(&sourceFile);
-    while(!in1.atEnd())
-    {
-      char *c = new char[1];
-      in1.readRawData(c,1);
-      sourceData.push_back(*c);
-      delete []c;
-    }
-    sourceFile.close();
-  }
-
-     //Create tmp folder
-  QString folderPath = QDir::home().path() + "/tmpApplReports";
-  if (!QDir(folderPath).exists()) {
-    QDir().mkdir(folderPath);
-  }
-  QString destinationFilePath = folderPath + "/" + dateStr + ".txt";
-  QFile destinationFile(destinationFilePath);
-  QByteArray destinationData = gzipDecompress(sourceData);
-  destinationFile.open(QIODevice::WriteOnly);
-  destinationFile.write(destinationData);
-  destinationFile.close();
-
-  return destinationFilePath;
+  QString decompressedDirPath = QDir::home().path() + "/tmpApplReports";
+  Decompresser decompress(compressedFilePath, decompressedDirPath);
+  return decompress.decompressedFilePath();
 }
 
 bool AppController::isDailyReport(QDate date) {
@@ -362,57 +299,6 @@ bool AppController::isDailyReport(QDate date) {
       return true;
   }
   return false;
-}
-
-
-QByteArray AppController::gzipDecompress(QByteArray &compressData ) {
-  //strip header
-  compressData.remove(0, 10);
-
-  const int buffer_size = 16384;
-  quint8 buffer[buffer_size];
-
-  z_stream cmpr_stream;
-  cmpr_stream.next_in = (unsigned char *)compressData.data();
-  cmpr_stream.avail_in = compressData.size();
-  cmpr_stream.total_in = 0;
-
-  cmpr_stream.next_out = buffer;
-  cmpr_stream.avail_out = buffer_size;
-  cmpr_stream.total_out = 0;
-
-  cmpr_stream.zalloc = Z_NULL;
-  cmpr_stream.zfree = Z_NULL;
-  cmpr_stream.opaque = Z_NULL;
-
-  int status = inflateInit2( &cmpr_stream, -8 );
-  if (status != Z_OK) {
-    qDebug() << "cmpr_stream error!";
-  }
-
-  QByteArray uncompressed;
-  do {
-    cmpr_stream.next_out = buffer;
-    cmpr_stream.avail_out = buffer_size;
-
-    status = inflate( &cmpr_stream, Z_NO_FLUSH );
-
-    if (status == Z_OK || status == Z_STREAM_END) {
-      QByteArray chunk = QByteArray::fromRawData((char *)buffer, buffer_size - cmpr_stream.avail_out);
-      uncompressed.append( chunk );
-    } else {
-      inflateEnd(&cmpr_stream);
-      break;
-    }
-
-    if (status == Z_STREAM_END) {
-      inflateEnd(&cmpr_stream);
-      break;
-    }
-  }
-  while (cmpr_stream.avail_out == 0);
-
-  return uncompressed;
 }
 
 QStringList* AppController::getAuthorList() {
