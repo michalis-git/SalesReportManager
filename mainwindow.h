@@ -53,13 +53,13 @@ private:
 
 
 private slots:
-    void onBrowseClicked();
     void onDateClicked(QDate date);
     void onDoneClicked();
     void onAuthorsDesignsRespReceived(QStringList* list);
     void onExportReportClicked();
     void onQuitClicked();
     void onListWidgetItemClicked(QListWidgetItem*item);
+    void onActionPreferencesTriggered();
 };
 
 #endif // MAINWINDOW_H

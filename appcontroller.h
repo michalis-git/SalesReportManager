@@ -30,10 +30,9 @@ public:
     QStringList mAllCurrenciesList;
 
     QList <QDate> readFilesFromDirectory(MainWindow *mainwindow, QString path);
-    QList <QDate> onBrowseClicked(MainWindow *mainwindow);
 
 //    QList <SaleItem*> onBalanceSheetSelected(MainWindow* mainwindow, QDate sinceDate, QDate untilDate, QString *missingDatesMessage);
-    void populateSaleItemsPerAuthorMap(QMap <QString, QList <SaleItem*>* > *saleItemsPerAuthorList, MainWindow* mainwindow, QDate sinceDate, QDate untilDate, QStringList authorsSelectedList, QString *missingDatesMessage);
+//    void populateSaleItemsPerAuthorMap(QMap <QString, QList <SaleItem*>* > *saleItemsPerAuthorList, MainWindow* mainwindow, QDate sinceDate, QDate untilDate, QStringList authorsSelectedList, QString *missingDatesMessage);
     void onSubsidiarySheetSelected(QMap <QString, QList <SaleItem*>* > *saleItemsPerAuthorList, MainWindow* mainwindow, QDate sinceDate, QDate untilDate, QStringList authorsSelectedList, QString *missingDatesMessage);
 
     QStringList browseSourceDir();
@@ -44,10 +43,9 @@ public:
 //    QString getMissingDates1(QDate* sinceDate, QDate* untilDate);
     bool isDailyReport(QDate date);
 
-    QStandardItemModel *dayReportModel(const QDate &date);
-    QString unpackDailyReportFile(QDate date);
+    QStandardItemModel *purchasesModel(const QDate &fromDate, const QDate &toDate);
+
     QStringList *getAuthorList();
-    QString getBrowsedPath(MainWindow* mainwindow);
     QList<QDate> loadAppleReportFiles(QString path, MainWindow *mainwindow);
     QString dailyReportsDirPath();
 

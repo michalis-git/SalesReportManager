@@ -13,9 +13,10 @@ class Purchases
     QStandardItemModel *m_purchasesModel;
     QList<Purchase> m_purchaseList;
 
+    QString decompressFile(const QDate &date);
+
 public:
-    Purchases(const QDate &date, const QString &path);
-    Purchases(const QDate &fromDate, const QDate &toDate, const QString &path);
+    Purchases(const QDate &fromDate, const QDate &toDate);
     QStandardItemModel *purchasesModel() const;
 };
 

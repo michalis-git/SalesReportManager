@@ -18,6 +18,7 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
+  appsettings.cpp \
   decompresser.cpp \
   exchangerates.cpp \
         mainwindow.cpp \
@@ -25,6 +26,7 @@ SOURCES += main.cpp\
     appcontroller.cpp \
     httprequest.cpp \
     currency.cpp \
+  preferecesdialog.cpp \
   property.cpp \
   purchase.cpp \
   purchases.cpp \
@@ -36,11 +38,13 @@ SOURCES += main.cpp\
 
 
 HEADERS  += mainwindow.h \
+    appsettings.h \
     dailyreport.h \
     appcontroller.h \
     currency.h \
     decompresser.h \
     exchangerates.h \
+    preferecesdialog.h \
     property.h \
     purchase.h \
     purchases.h \
@@ -51,7 +55,8 @@ HEADERS  += mainwindow.h \
     reports/balancesheetrep.h
 
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+  preferecesdialog.ui
 
 INCLUDEPATH += $$[QT_INSTALL_HEADERS]/QtZlib
 LIBS += -L/usr/local/opt/zlib/lib -lz

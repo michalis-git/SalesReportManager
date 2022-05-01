@@ -16,6 +16,8 @@
 #include "QDebug"
 #include "QByteArray"
 #include "QFileDialog"
+#include "preferecesdialog.h"
+#include "appsettings.h"
 
 #include "QDate"
 #include <QList>
@@ -50,7 +52,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->showMaximized();
 
-    connect(ui->browseSourceToolButton, SIGNAL(clicked()), this, SLOT(onBrowseClicked()));
     connect(ui->calendarWidget, SIGNAL(clicked(QDate)), this, SLOT(onDateClicked(QDate)));
     connect(ui->doneButton, SIGNAL(clicked()), this, SLOT(onDoneClicked()));
     connect(mAppController, SIGNAL(authorsDesignRespReceived(QStringList*)), this, SLOT(onAuthorsDesignsRespReceived(QStringList*)));
@@ -58,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionActionExport, SIGNAL(triggered()), this, SLOT(onExportReportClicked()));
     connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(onQuitClicked()));
     connect(ui->listWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(onListWidgetItemClicked(QListWidgetItem*)));
+    connect(ui->actionPreferences, &QAction::triggered, this, &MainWindow::onActionPreferencesTriggered);
 
 // Initialize Calendars
     ui->fromDateEdit->setDisplayFormat("dd/MM/yyyy");
@@ -89,6 +91,11 @@ void MainWindow::onListWidgetItemClicked(QListWidgetItem* item) {
         item->setCheckState(Qt::Checked);
 }
 
+void MainWindow::onActionPreferencesTriggered() {
+    PreferecesDialog dialog(this);
+    dialog.exec();
+}
+
 void MainWindow::upDateCalendars(QList<QDate> dateOfReportList) {
     if (dateOfReportList.isEmpty()){return;}
     ui->calendarWidget->updatesEnabled();
@@ -109,28 +116,7 @@ void MainWindow::upDateCalendars(QList<QDate> dateOfReportList) {
 }
 
 
-void MainWindow::onBrowseClicked()
-{
-    QMessageBox::StandardButton reply;
-      reply = QMessageBox::question(this, "Warning!", "The current application will close. Do you want to continue? If not, press no and print your reports.",
-                                    QMessageBox::Yes|QMessageBox::No);
-      if (reply == QMessageBox::Yes) {
-          QString path = mAppController->getBrowsedPath(this);
-          if (path == "cancel") return;
 
-          QList<QDate> dateOfReportList1 = mAppController->loadAppleReportFiles(path, this);
-          if (dateOfReportList1.count() < 1) return;
-
-          QSettings settings("ADRM");
-          settings.setValue("dailyReportsDirPath", path);
-          ui->sourceDirLabel->setText(path);
-
-          QMessageBox::warning( this, "Warning", "The application is going to close in order to apply the change. Please run it again." );
-          this->close();
-      } else {
-        return;
-      }
-}
 
 void MainWindow::onDateClicked(QDate date) {
     if (mAppController->mAllDatesList.isEmpty()) {
@@ -146,7 +132,7 @@ void MainWindow::onDateClicked(QDate date) {
         return;
     }
 
-    QStandardItemModel *model = mAppController->dayReportModel(date);
+    QStandardItemModel *model = mAppController->purchasesModel(date, date);
     ui->dayTableView->setModel(model);
     ui->dayTableView->resizeColumnsToContents();
 }
@@ -169,17 +155,15 @@ void MainWindow::clearCalendars() {
 void MainWindow::onDoneClicked() {
     this->setDisabled(true);
     QApplication::setOverrideCursor(Qt::WaitCursor);
-//    if (ui->comboBox->currentIndex() == 0)
-//    {
-//        this->setDisabled(false);
-//        QApplication::restoreOverrideCursor();
-//        QMessageBox::warning( this, "Warning", "Please select a type of report." );
-//        QApplication::setOverrideCursor(Qt::WaitCursor);
-//        return;
-//    }
 
-    QDate sinceDate = fromCalendarWidget->selectedDate();
-    QDate untilDate = toCalendarWidget->selectedDate();
+    QDate fromDate = fromCalendarWidget->selectedDate();
+    QDate toDate = toCalendarWidget->selectedDate();
+    // Checks if the selected time period is valid.
+    if (fromDate > toDate) {
+        QMessageBox::warning(this, "Warning", "The date in the first calendar must be earlier than the date in the second one.");
+        return;
+    }
+
     QString message = "xx"; // = new QList <QDate>;
 
     ui->headerTextEdit->clear();
@@ -187,7 +171,7 @@ void MainWindow::onDoneClicked() {
     QStringList authorsSelectedList = populateAuthorsSelectedList();
 
     QMap <QString, QList<SaleItem*>* > saleItemPerAuthorMap;
-    mAppController->populateSaleItemsPerAuthorMap(&saleItemPerAuthorMap, this, sinceDate, untilDate, authorsSelectedList, &message);
+//    mAppController->populateSaleItemsPerAuthorMap(&saleItemPerAuthorMap, this, fromDate, toDate, authorsSelectedList, &message);
 
     if(saleItemPerAuthorMap.isEmpty())
     {
@@ -203,11 +187,11 @@ void MainWindow::onDoneClicked() {
         {
             qSort((saleItemPerAuthorMap[key])->begin(), (saleItemPerAuthorMap[key])->end(), authorLessThan );
         }
-        populateReportSheet(sinceDate, untilDate, message, saleItemPerAuthorMap);
+        populateReportSheet(fromDate, toDate, message, saleItemPerAuthorMap);
     }
     else if (ui->comboBox->currentText() == "Subsidiary Ledger")
     {
-        populateSubsidiaryLedgerRep(sinceDate, untilDate, message, saleItemPerAuthorMap);
+        populateSubsidiaryLedgerRep(fromDate, toDate, message, saleItemPerAuthorMap);
     }
     else if (ui->comboBox->currentText() == "Design by Country")
     {
@@ -215,7 +199,7 @@ void MainWindow::onDoneClicked() {
         {
             qSort((saleItemPerAuthorMap[key])->begin(), (saleItemPerAuthorMap[key])->end(), countryLessThan );
         }
-        populateByCountryRep(sinceDate, untilDate, message, saleItemPerAuthorMap);
+        populateByCountryRep(fromDate, toDate, message, saleItemPerAuthorMap);
     }
     saleItemPerAuthorMap.clear();
     this->setDisabled(false);
@@ -690,9 +674,8 @@ void MainWindow::onAuthorsDesignsRespReceived(QStringList *list) {
     }
     ui->listWidget->item(0)->setCheckState(Qt::Unchecked);
 
-    QString dailyReportsPath = mAppController->dailyReportsDirPath();
+    QString dailyReportsPath = AppSettings::instance()->reportsDirPath();
 
-    ui->sourceDirLabel->setText(dailyReportsPath);
     QList<QDate> dateOfReportList = mAppController->loadAppleReportFiles(dailyReportsPath, this);
     upDateCalendars(dateOfReportList);
     if (mAppController->mAllDatesList.isEmpty()){return;}
