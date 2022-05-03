@@ -39,6 +39,7 @@ AppController::AppController(MainWindow* mainwindow) {
         if (errorType == AppSettings::REPORTS_DIR_NOT_EXIST)
             qDebug() << "Please browse to the Daily Reports directory";
     }
+    getAuthorList();
 }
 
 AppController::~AppController() {
@@ -192,220 +193,164 @@ bool AppController::isDailyReport(QDate date) {
 }
 
 QStringList* AppController::getAuthorList() {
+    qDebug() << request->authorSingularList;
     return request->authorSingularList;
 }
 
 void AppController::populateAllSaleItemList(QMap<QString, QList<SaleItem *>* >* saleItemsPerAuthorMap, QDate *date, MainWindow *mainwindow)
 {
-    QString destinationPath;// = unpackDailyReportFile(*date);
-    QFile destinationFile(destinationPath);
+//    QString destinationPath;// = unpackDailyReportFile(*date);
+//    QFile destinationFile(destinationPath);
 
-    destinationFile.open(QIODevice::ReadOnly);
-    QStringList fileLineList;
-    QTextStream textStream(&destinationFile);
-    while (true)
-    {
-        QString line = textStream.readLine();
-        //        if (line.contains("	-"))
-        //        {
-        //            QApplication::restoreOverrideCursor();
-        //            QMessageBox::warning(mainwindow, "Warning", "There are negative revenues! Check the \"Revenue\" column.");
-        //            QApplication::setOverrideCursor(Qt::WaitCursor);
-        //        }
-        if (line.isNull())
-            break;
-        else
-            fileLineList.append(line);
-    }
+//    destinationFile.open(QIODevice::ReadOnly);
+//    QStringList fileLineList;
+//    QTextStream textStream(&destinationFile);
+//    while (true)
+//    {
+//        QString line = textStream.readLine();
+//        //        if (line.contains("	-"))
+//        //        {
+//        //            QApplication::restoreOverrideCursor();
+//        //            QMessageBox::warning(mainwindow, "Warning", "There are negative revenues! Check the \"Revenue\" column.");
+//        //            QApplication::setOverrideCursor(Qt::WaitCursor);
+//        //        }
+//        if (line.isNull())
+//            break;
+//        else
+//            fileLineList.append(line);
+//    }
 
-    for (int i = 1; i < fileLineList.size(); ++i) {
-        std::string t = fileLineList.at(i).toLocal8Bit().constData();
-        QString s = QString::fromStdString(t);
-        QRegExp rx("((\\w|[.]|[/]|[ ]|[-])+(\\t))");
-        QStringList list;
-        int pos = 0;
+//    for (int i = 1; i < fileLineList.size(); ++i) {
+//        std::string t = fileLineList.at(i).toLocal8Bit().constData();
+//        QString s = QString::fromStdString(t);
+//        QRegExp rx("((\\w|[.]|[/]|[ ]|[-])+(\\t))");
+//        QStringList list;
+//        int pos = 0;
 
-        while ((pos = rx.indexIn(s, pos)) != -1) {
-            list << rx.cap(1);
-            pos += rx.matchedLength();
-        }
+//        while ((pos = rx.indexIn(s, pos)) != -1) {
+//            list << rx.cap(1);
+//            pos += rx.matchedLength();
+//        }
 
-        QString authorValue = QString::fromStdString(list[4].toStdString()).replace("	", "");
-        if (authorValue == "DRAWings Snap"){authorValue = "Wings Systems";}
-        else {authorValue = request->designsAuthors.value(authorValue);}
+//        QString authorValue = QString::fromStdString(list[4].toStdString()).replace("	", "");
+//        if (authorValue == "DRAWings Snap"){authorValue = "Wings Systems";}
+//        else {authorValue = request->designsAuthors.value(authorValue);}
 
-        QString skuString = QString::fromStdString(list[2].toStdString()).replace("	", "");
+//        QString skuString = QString::fromStdString(list[2].toStdString()).replace("	", "");
 
-        if (skuString == "M00Edit_Module" || skuString == "J00Edit_Module" || skuString == "M01Text_Module" || skuString == "J01Text_Module")
-        {
-            authorValue = "Wings Systems";
-        }
-        qDebug() << *saleItemsPerAuthorMap;
-        //        if (!(*saleItemsPerAuthorMap).contains(authorValue))// && skuString != "M00Edit_Module" && skuString != "J00Edit_Module" && skuString != "M01Text_Module" && skuString != "J01Text_Module")
-        //        {
-        //            if(!request->authorSingularList->contains(authorValue))
-        //            {
-        //                QApplication::restoreOverrideCursor();
-        //                QMessageBox::warning(mainwindow, "Warning", "The following uknown authors has been found: \"" + authorValue + "\"");
-        //                QApplication::setOverrideCursor(Qt::WaitCursor);
-        //            }
-        //            continue;
-        //        }
+//        if (skuString == "M00Edit_Module" || skuString == "J00Edit_Module" || skuString == "M01Text_Module" || skuString == "J01Text_Module")
+//        {
+//            authorValue = "Wings Systems";
+//        }
+//        qDebug() << *saleItemsPerAuthorMap;
+//        //        if (!(*saleItemsPerAuthorMap).contains(authorValue))// && skuString != "M00Edit_Module" && skuString != "J00Edit_Module" && skuString != "M01Text_Module" && skuString != "J01Text_Module")
+//        //        {
+//        //            if(!request->authorSingularList->contains(authorValue))
+//        //            {
+//        //                QApplication::restoreOverrideCursor();
+//        //                QMessageBox::warning(mainwindow, "Warning", "The following uknown authors has been found: \"" + authorValue + "\"");
+//        //                QApplication::setOverrideCursor(Qt::WaitCursor);
+//        //            }
+//        //            continue;
+//        //        }
 
 
-        //qDebug() << authorValue;
-        SaleItem* saleItem = new SaleItem;
-        (*saleItemsPerAuthorMap)[authorValue]->append(saleItem);
+//        //qDebug() << authorValue;
+//        SaleItem* saleItem = new SaleItem;
+//        (*saleItemsPerAuthorMap)[authorValue]->append(saleItem);
 
-        saleItem->provider = QString::fromStdString(list[0].toStdString()).replace("	", "");
-        saleItem->providerCountry = QString::fromStdString(list[1].toStdString()).replace("	", "");
-        //        QString skuString = QString::fromStdString(list[2].toStdString()).replace("	", "");
-        saleItem->sku = skuString;
-        saleItem->developer = QString::fromStdString(list[3].toStdString()).replace("	", "");
-        QString titleString = QString::fromStdString(list[4].toStdString()).replace("	", "");
-        saleItem->title = titleString;
-        saleItem->version = QString::fromStdString(list[5].toStdString()).replace("	", "");
-        QString productTypeIdentifier = QString::fromStdString(list[6].toStdString()).replace("	", "");
-        saleItem->productTypeIdentifier = productTypeIdentifier;
-        QString units = QString::fromStdString(list[7].toStdString()).replace("	", "");
-        saleItem->units = units;
-        QString developerProceedsString = list[8].replace("	", "");
-        if (developerProceedsString.left(1) == ".")
-        {
-            developerProceedsString = "0" +developerProceedsString;
-        }
-        else if (developerProceedsString.left(2) == "-.")
-        {
-            developerProceedsString = developerProceedsString.left(developerProceedsString.length()-2);
-            developerProceedsString = "-0." +developerProceedsString;
-        }
+//        saleItem->provider = QString::fromStdString(list[0].toStdString()).replace("	", "");
+//        saleItem->providerCountry = QString::fromStdString(list[1].toStdString()).replace("	", "");
+//        //        QString skuString = QString::fromStdString(list[2].toStdString()).replace("	", "");
+//        saleItem->sku = skuString;
+//        saleItem->developer = QString::fromStdString(list[3].toStdString()).replace("	", "");
+//        QString titleString = QString::fromStdString(list[4].toStdString()).replace("	", "");
+//        saleItem->title = titleString;
+//        saleItem->version = QString::fromStdString(list[5].toStdString()).replace("	", "");
+//        QString productTypeIdentifier = QString::fromStdString(list[6].toStdString()).replace("	", "");
+//        saleItem->productTypeIdentifier = productTypeIdentifier;
+//        QString units = QString::fromStdString(list[7].toStdString()).replace("	", "");
+//        saleItem->units = units;
+//        QString developerProceedsString = list[8].replace("	", "");
+//        if (developerProceedsString.left(1) == ".") {
+//            developerProceedsString = "0" +developerProceedsString;
+//        } else if (developerProceedsString.left(2) == "-.") {
+//            developerProceedsString = developerProceedsString.left(developerProceedsString.length()-2);
+//            developerProceedsString = "-0." +developerProceedsString;
+//        }
 
-        int sign = 1;
-        if (units.toInt() < 0) sign = -1;
-        float developerProceeds = sign * developerProceedsString.toFloat()/0.7;
-        // if (developerProceeds <0) qDebug() << "saleItem->developerProceeds" << developerProceeds;
+//        int sign = 1;
+//        if (units.toInt() < 0) sign = -1;
+//        float developerProceeds = sign * developerProceedsString.toFloat()/0.7;
+//        // if (developerProceeds <0) qDebug() << "saleItem->developerProceeds" << developerProceeds;
 
-        saleItem->developerProceeds = developerProceeds;
-        QString beginDate = QString::fromStdString(list[9].toStdString()).replace("	", "");
-        saleItem->beginDate = beginDate;
-        saleItem->endDate = QString::fromStdString(list[10].toStdString()).replace("	", "");
-        saleItem->customerCurrency = QString::fromStdString(list[11].toStdString()).replace("	", "");
-        saleItem->countryCode = QString::fromStdString(list[12].toStdString()).replace("	", "");
-        saleItem->currencyOfProceeds = QString::fromStdString(list[13].toStdString()).replace("	", "");
-        saleItem->appleIdentifier = QString::fromStdString(list[14].toStdString()).replace("	", "");
-        saleItem->customerCurrency = QString::fromStdString(list[11].toStdString()).replace("	", "");
-        QString customerCurrency = QString::fromStdString(list[11].toStdString()).replace("	", "");
-        saleItem->customerCurrency = customerCurrency;
-        QString customerPriceString = list[15].replace("	", "");
-        QString parentIdentifierString = list[17].replace("	", "");
+//        saleItem->developerProceeds = developerProceeds;
+//        QString beginDate = QString::fromStdString(list[9].toStdString()).replace("	", "");
+//        saleItem->beginDate = beginDate;
+//        saleItem->endDate = QString::fromStdString(list[10].toStdString()).replace("	", "");
+//        saleItem->customerCurrency = QString::fromStdString(list[11].toStdString()).replace("	", "");
+//        saleItem->countryCode = QString::fromStdString(list[12].toStdString()).replace("	", "");
+//        saleItem->currencyOfProceeds = QString::fromStdString(list[13].toStdString()).replace("	", "");
+//        saleItem->appleIdentifier = QString::fromStdString(list[14].toStdString()).replace("	", "");
+//        saleItem->customerCurrency = QString::fromStdString(list[11].toStdString()).replace("	", "");
+//        QString customerCurrency = QString::fromStdString(list[11].toStdString()).replace("	", "");
+//        saleItem->customerCurrency = customerCurrency;
+//        QString customerPriceString = list[15].replace("	", "");
+//        QString parentIdentifierString = list[17].replace("	", "");
 
-        QString realNameString = titleString;
-        if (parentIdentifierString == " ")
-        {
-            if (skuString == "DRAWings.Snap.X001") {
-                realNameString = "MacDRAWings";
-            } else if (skuString == "Drawings.Snap.001") {
-                realNameString = "Drawings Snap";
-            } else if (skuString == "Snap.001") {
-                realNameString = "Artistic Snap";
-            } else {
-                realNameString = "UKNOWN APPLICATION!";
-                QApplication::restoreOverrideCursor();
-                QMessageBox::warning(mainwindow, "Warning", "There is at least one Uknown Application in the report(s).");
-                QApplication::setOverrideCursor(Qt::WaitCursor);
-            }
-        } else {
-            if (skuString == "00Edit_Module" || skuString == "M00Edit_Module" || skuString == "J00Edit_Module") {
-                realNameString = "Edit. Module";
-            } else if (skuString == "01Text_Module" || skuString == "M01Text_Module" || skuString == "J01Text_Module") {
-                realNameString = "Text Module";
-            } else {
-                QString formatedName = titleString.left(titleString.length() - 8);
-                if (formatedName.right(1) == ("_")) {
-                    formatedName = formatedName.left(formatedName.length() - 1);
-                    formatedName.append(" - PACK");
-                }
-                realNameString = formatedName;
-            }
-        }
 
-        //        if (productTypeIdentifier == "FI1")
-        //        {
-        //            realNameString = realNameString.append(" (Mac)");
-        //        }
-        //        else if (productTypeIdentifier == "IA1" ||productTypeIdentifier == "IA9" || productTypeIdentifier == "IAY" || productTypeIdentifier == "IAC")
-        //        {
-        //            realNameString = realNameString.append(" (iOS)");
-        //        }
 
-        if (productTypeIdentifier == "7" || productTypeIdentifier == "7F" || productTypeIdentifier == "7T" || productTypeIdentifier == "F7") {
-            realNameString = realNameString.append(" - update");
-        }
+//        if (productTypeIdentifier == "7" || productTypeIdentifier == "7F" || productTypeIdentifier == "7T" || productTypeIdentifier == "F7") {
+//            realNameString = realNameString.append(" - update");
+//        }
 
-        if (parentIdentifierString == "DRAWings.Snap.X001") {
-            realNameString.append(" (Mac)");
-            saleItem->parentIdentifier = "MacDRAWings";
-        } else if (parentIdentifierString == "Drawings.Snap.001") {
-            realNameString.append(" (Draw.)");
-            saleItem->parentIdentifier = "Drawings Snap";
-        } else if (parentIdentifierString == "Snap.001") {
-            realNameString.append(" (Art.)");
-            saleItem->parentIdentifier = "Artistic Snap";
-        } else if (parentIdentifierString == " ") {
-            saleItem->parentIdentifier = "-";
-        } else {
-            saleItem->parentIdentifier = "UKNOWN PARENT!";
-            QApplication::restoreOverrideCursor();
-            QMessageBox::warning(mainwindow, "Warning", "There is at least one Uknown Download Source (see \"Downloaded from\" column) in the report(s).");
-            QApplication::setOverrideCursor(Qt::WaitCursor);
-        }
 
-        saleItem->realName = realNameString;
+//        saleItem->realName = realNameString;
 
-        if (customerPriceString.left(1) == ".") {
-            customerPriceString = ("0" +customerPriceString);
-        }
-        else if (developerProceedsString.left(2) == "-.") {
-            customerPriceString = customerPriceString.left(customerPriceString.length()-2);
-            customerPriceString = "-0." +customerPriceString;
-        }
+//        if (customerPriceString.left(1) == ".") {
+//            customerPriceString = ("0" +customerPriceString);
+//        }
+//        else if (developerProceedsString.left(2) == "-.") {
+//            customerPriceString = customerPriceString.left(customerPriceString.length()-2);
+//            customerPriceString = "-0." +customerPriceString;
+//        }
 
-        float customerPrice = customerPriceString.toFloat();
-        //if (customerPrice < 0) qDebug() <<  "saleIteme->customerPrice: " <<customerPrice;
+//        float customerPrice = customerPriceString.toFloat();
+//        //if (customerPrice < 0) qDebug() <<  "saleIteme->customerPrice: " <<customerPrice;
 
-        saleItem->customerPrice = customerPrice;
-        saleItem->author = authorValue;
-        saleItem->wingsPercentage = request->designsWingsPercentageMap.value(titleString);
-        //qDebug() << designName << request->designsWingsPercentageMap.value(designName);
-        saleItem->date = *date;
+//        saleItem->customerPrice = customerPrice;
+//        saleItem->author = authorValue;
+//        saleItem->wingsPercentage = request->designsWingsPercentageMap.value(titleString);
+//        //qDebug() << designName << request->designsWingsPercentageMap.value(designName);
+//        saleItem->date = *date;
 
-        ExchangeRates::RateErrorType error;
-        float rate = ExchangeRates::instance()->rate(customerCurrency,
-                                                     date->toString("yyyy-MM-dd"),
-                                                     error);
-        switch (error) {
-        case ExchangeRates::NO_DATA_FOR_CURRENCY:
-            qDebug() << "Error! no rates for " << customerCurrency << "!";
-            break;
-        case ExchangeRates::NO_DATA_FOR_DATE:
-            qDebug() << "Error! No rate for " << customerCurrency
-                     << " on " << date->toString("yyyy-MM-dd") << "!";
-            break;
-        default:
-            break;
-        }
-        saleItem->developerProceedsinEuros = developerProceeds*rate;
+//        ExchangeRates::RateErrorType error;
+//        float rate = ExchangeRates::instance()->rate(customerCurrency,
+//                                                     date->toString("yyyy-MM-dd"),
+//                                                     error);
+//        switch (error) {
+//        case ExchangeRates::NO_DATA_FOR_CURRENCY:
+//            qDebug() << "Error! no rates for " << customerCurrency << "!";
+//            break;
+//        case ExchangeRates::NO_DATA_FOR_DATE:
+//            qDebug() << "Error! No rate for " << customerCurrency
+//                     << " on " << date->toString("yyyy-MM-dd") << "!";
+//            break;
+//        default:
+//            break;
+//        }
+//        saleItem->developerProceedsinEuros = developerProceeds*rate;
 
-        //        //Check if the Revenue is negative and append to Comments
-        //        if (customerPrice < 0)
-        //        {
-        //            mCommentString.append(authorValue + "'s " +  realNameString + " on " + beginDate + ", ");
-        //        }
-    }
+//        //        //Check if the Revenue is negative and append to Comments
+//        //        if (customerPrice < 0)
+//        //        {
+//        //            mCommentString.append(authorValue + "'s " +  realNameString + " on " + beginDate + ", ");
+//        //        }
+//    }
 
-    destinationFile.close();
+//    destinationFile.close();
 
-    // Remove temporary file after DailyReport object is created.
-    destinationFile.remove();
+//    // Remove temporary file after DailyReport object is created.
+//    destinationFile.remove();
 }
 

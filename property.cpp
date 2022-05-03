@@ -1,5 +1,7 @@
 #include "property.h"
 
+#include <QDate>
+
 
 Property::PropertyName Property::propertyName() const {
     return m_propertyName;
@@ -17,6 +19,10 @@ Property::DataType Property::dataType() const {
     return m_dataType;
 }
 
+const QVariant &Property::value() const {
+    return m_value;
+}
+
 Property::DataType Property::dataTypeFromPropertyName(PropertyName name) {
     switch (name) {
     case PROVIDER:
@@ -26,8 +32,12 @@ Property::DataType Property::dataTypeFromPropertyName(PropertyName name) {
     case TITLE:
     case VERSION:
     case PRODUCT_TYPE_ID:     // "Product Type Identifier"
+        return STRING;
     case UNITS:
+        return INT;
     case DEVELOPER_PROCEEDS:
+    case DEVELOPER_PROCEEDS_EUROS:
+        return FLOAT;
     case BEGIN_DATE:
     case END_DATE:
     case CUSTOMER_CURRENCY:
@@ -67,6 +77,8 @@ QString Property::nameFromPropertyName(PropertyName name) {
         return "Units";
     case DEVELOPER_PROCEEDS:
         return "Developer proceeds";
+    case DEVELOPER_PROCEEDS_EUROS:
+        return "Developer proceeds (EUR)";
     case BEGIN_DATE:
         return "Begin date";
     case END_DATE:
@@ -102,4 +114,17 @@ Property::Property(const PropertyName &propertyName, const QString &stringValue)
     : m_propertyName(propertyName), m_stringValue(stringValue) {
     m_name = nameFromPropertyName(propertyName);
     m_dataType = dataTypeFromPropertyName(propertyName);
+    switch (m_dataType) {
+    case Property::INT:
+        m_value.setValue(stringValue.toInt());
+        break;
+    case Property::FLOAT:
+        m_value.setValue(stringValue.toFloat());
+        break;
+    case Property::DATE:
+        m_value.setValue(QDate::fromString("yyyy-MM-dd"));
+        break;
+    default:
+        break;
+    }
 }

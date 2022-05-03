@@ -51,9 +51,8 @@ Purchases::Purchases(const QDate &fromDate, const QDate &toDate) {
 
 
             for (int i = 1; i < fileLineList.count(); i++) {
-                qDebug() << fileLineList[i];
                 QStringList values = fileLineList.at(i).split("\t");
-                Purchase *purchase = new Purchase(fromDate, values);
+                Purchase *purchase = new Purchase(date, values);
                 m_purchaseList << *purchase;
             }
 
@@ -78,10 +77,14 @@ QStandardItemModel *Purchases::purchasesModel() const {
         QList<Property> props = purchase.properties();
         for (int j = 0; j < props.count(); j++) {
             QStandardItem *item = new QStandardItem(props[j].stringValue());
-            qDebug() << i << j << props[j].stringValue();
+//            qDebug() << i << j << props[j].stringValue();
             m_purchasesModel->setItem(i, j, item);
         }
         i++;
     }
     return m_purchasesModel;
+}
+
+const QList<Purchase> &Purchases::purchaseList() const {
+    return m_purchaseList;
 }

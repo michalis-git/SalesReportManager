@@ -2,6 +2,7 @@
 #define PROPERTY_H
 
 #include <QString>
+#include <QVariant>
 
 //   // "Provider"
 //QString m_provider;
@@ -53,7 +54,7 @@
 class Property
 {
 public:
-    enum DataType { STRING, FLOAT, DATE };
+    enum DataType { INT, FLOAT, DATE, STRING };
 
     enum PropertyName {
         PROVIDER,
@@ -65,6 +66,7 @@ public:
         PRODUCT_TYPE_ID,     // "Product Type Identifier"
         UNITS,
         DEVELOPER_PROCEEDS,
+        DEVELOPER_PROCEEDS_EUROS,
         BEGIN_DATE,
         END_DATE,
         CUSTOMER_CURRENCY,
@@ -84,6 +86,7 @@ public:
 private:
     PropertyName m_propertyName;
     QString m_stringValue;
+    QVariant m_value;
     QString m_name;
     DataType m_dataType;
     DataType dataTypeFromPropertyName(PropertyName name);
@@ -96,6 +99,7 @@ public:
     const QString &stringValue() const;
     const QString &name() const;
     Property::DataType dataType() const;
+    const QVariant &value() const;
 };
 
 #endif // PROPERTY_H

@@ -18,6 +18,7 @@
 #include "QFileDialog"
 #include "preferecesdialog.h"
 #include "appsettings.h"
+#include "purchases.h"
 
 #include "QDate"
 #include <QList>
@@ -54,14 +55,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->calendarWidget, SIGNAL(clicked(QDate)), this, SLOT(onDateClicked(QDate)));
     connect(ui->doneButton, SIGNAL(clicked()), this, SLOT(onDoneClicked()));
-    connect(mAppController, SIGNAL(authorsDesignRespReceived(QStringList*)), this, SLOT(onAuthorsDesignsRespReceived(QStringList*)));
     connect(ui->actionExport_Report_as_HTML, SIGNAL(triggered()), this, SLOT(onExportReportClicked()));
     connect(ui->actionActionExport, SIGNAL(triggered()), this, SLOT(onExportReportClicked()));
     connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(onQuitClicked()));
     connect(ui->listWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(onListWidgetItemClicked(QListWidgetItem*)));
     connect(ui->actionPreferences, &QAction::triggered, this, &MainWindow::onActionPreferencesTriggered);
 
-// Initialize Calendars
+    // Initialize Calendars
     ui->fromDateEdit->setDisplayFormat("dd/MM/yyyy");
     ui->fromDateEdit->setCalendarPopup(true);
     fromCalendarWidget = new QCalendarWidget;
@@ -72,7 +72,12 @@ MainWindow::MainWindow(QWidget *parent) :
     toCalendarWidget = new QCalendarWidget;
     ui->toDateEdit->setCalendarWidget(toCalendarWidget);
 
+    QString dailyReportsPath = AppSettings::instance()->reportsDirPath();
 
+    QList<QDate> dateOfReportList = mAppController->loadAppleReportFiles(dailyReportsPath, this);
+    upDateCalendars(dateOfReportList);
+    if (mAppController->mAllDatesList.isEmpty()){return;}
+    onDateClicked(dateOfReportList.last());
 }
 
 MainWindow::~MainWindow() {
@@ -114,9 +119,6 @@ void MainWindow::upDateCalendars(QList<QDate> dateOfReportList) {
     fromCalendarWidget->setSelectedDate(dateOfReportList.last());
     toCalendarWidget->setSelectedDate(dateOfReportList.last());
 }
-
-
-
 
 void MainWindow::onDateClicked(QDate date) {
     if (mAppController->mAllDatesList.isEmpty()) {
@@ -171,35 +173,19 @@ void MainWindow::onDoneClicked() {
     QStringList authorsSelectedList = populateAuthorsSelectedList();
 
     QMap <QString, QList<SaleItem*>* > saleItemPerAuthorMap;
-//    mAppController->populateSaleItemsPerAuthorMap(&saleItemPerAuthorMap, this, fromDate, toDate, authorsSelectedList, &message);
+    //    mAppController->populateSaleItemsPerAuthorMap(&saleItemPerAuthorMap, this, fromDate, toDate, authorsSelectedList, &message);
 
-    if(saleItemPerAuthorMap.isEmpty())
-    {
-        saleItemPerAuthorMap.clear();
-        this->setDisabled(false);
-        QApplication::restoreOverrideCursor();
-        return;
-    }
-
-    if (ui->comboBox->currentText() == "Balance Sheet")
-    {
-        foreach (QString key, saleItemPerAuthorMap.keys())
-        {
+    if (ui->comboBox->currentText() == "Balance Sheet") {
+        foreach (QString key, saleItemPerAuthorMap.keys()) {
             qSort((saleItemPerAuthorMap[key])->begin(), (saleItemPerAuthorMap[key])->end(), authorLessThan );
         }
         populateReportSheet(fromDate, toDate, message, saleItemPerAuthorMap);
-    }
-    else if (ui->comboBox->currentText() == "Subsidiary Ledger")
-    {
+    } else if (ui->comboBox->currentText() == "Subsidiary Ledger") {
         populateSubsidiaryLedgerRep(fromDate, toDate, message, saleItemPerAuthorMap);
-    }
-    else if (ui->comboBox->currentText() == "Design by Country")
-    {
-        foreach (QString key, saleItemPerAuthorMap.keys())
-        {
-            qSort((saleItemPerAuthorMap[key])->begin(), (saleItemPerAuthorMap[key])->end(), countryLessThan );
-        }
-        populateByCountryRep(fromDate, toDate, message, saleItemPerAuthorMap);
+    } else if (ui->comboBox->currentText() == "Design by Country") {
+        qDebug() << "!";
+//        populateByCountryRep(fromDate, toDate, message, saleItemPerAuthorMap);
+        byCountryModel();
     }
     saleItemPerAuthorMap.clear();
     this->setDisabled(false);
@@ -305,7 +291,7 @@ void MainWindow::populateReportSheet(QDate fromDate, QDate toDate, QString messa
             else if (name == previousDesignName && currency != previousCurrency)
             {
                 if (!ui->minReportsCheckBox->isChecked())
-                balanceSheetRep->appendLineinTable(previousDesignName, previousParent, numOfItemsPerCurrency, moneyOfItemsPerCurrency, previousCurrency, eurosOfItemsPerCurrency, prevWingsPercentage);
+                    balanceSheetRep->appendLineinTable(previousDesignName, previousParent, numOfItemsPerCurrency, moneyOfItemsPerCurrency, previousCurrency, eurosOfItemsPerCurrency, prevWingsPercentage);
                 numOfItemsPerDesign += numOfItems;
                 numOfItemsPerCurrency = numOfItems;
                 numOfItemsTotal += numOfItems;
@@ -328,7 +314,7 @@ void MainWindow::populateReportSheet(QDate fromDate, QDate toDate, QString messa
                 designerRevenueTotal += eurosOfItems * (0.7 - wingsPercentage);
             } else {
                 if (!ui->minReportsCheckBox->isChecked())
-                balanceSheetRep->appendLineinTable(previousDesignName, previousParent, numOfItemsPerCurrency, moneyOfItemsPerCurrency, previousCurrency, eurosOfItemsPerCurrency, prevWingsPercentage);
+                    balanceSheetRep->appendLineinTable(previousDesignName, previousParent, numOfItemsPerCurrency, moneyOfItemsPerCurrency, previousCurrency, eurosOfItemsPerCurrency, prevWingsPercentage);
                 balanceSheetRep->appendTotalPerDesignInTable(previousDesignName, previousParent, numOfItemsPerDesign, eurosOfItemsPerDesign, prevWingsPercentage);
                 numOfItemsPerDesign = numOfItems;
                 numOfItemsPerCurrency = numOfItems;
@@ -360,7 +346,7 @@ void MainWindow::populateReportSheet(QDate fromDate, QDate toDate, QString messa
             }
         }
         if (!ui->minReportsCheckBox->isChecked())
-        balanceSheetRep->appendLineinTable(previousDesignName, previousParent, numOfItemsPerCurrency, moneyOfItemsPerCurrency, previousCurrency, eurosOfItemsPerCurrency, prevWingsPercentage);
+            balanceSheetRep->appendLineinTable(previousDesignName, previousParent, numOfItemsPerCurrency, moneyOfItemsPerCurrency, previousCurrency, eurosOfItemsPerCurrency, prevWingsPercentage);
         balanceSheetRep->appendTotalPerDesignInTable(previousDesignName, previousParent, numOfItemsPerDesign, eurosOfItemsPerDesign, prevWingsPercentage);
     }
     balanceSheetRep->appendTotalOfReportInTable(numOfItemsTotal, eurosOfItemsTotal, wingsRevenueTotal, designerRevenueTotal);
@@ -446,7 +432,7 @@ void MainWindow::populateSubsidiaryLedgerRep(QDate fromDate, QDate toDate, QStri
             if (date == previousDate)
             {
                 if (!ui->minReportsCheckBox->isChecked())
-                subsidiaryLedgerRep->appendLineinTable(previousDate.toString("dd/MM/yyyy"), name, parent, numOfItems, moneyOfItems, currency, eurosOfItems, wingsPercentage);
+                    subsidiaryLedgerRep->appendLineinTable(previousDate.toString("dd/MM/yyyy"), name, parent, numOfItems, moneyOfItems, currency, eurosOfItems, wingsPercentage);
                 numOfItemsPerDate += numOfItems;
                 numOfItemsTotal += numOfItems;
                 eurosOfItemsPerDate += eurosOfItems;
@@ -474,15 +460,15 @@ void MainWindow::populateSubsidiaryLedgerRep(QDate fromDate, QDate toDate, QStri
                 wingsRevenueTotal += eurosOfItems * wingsPercentage;
                 designerRevenueTotal += eurosOfItems * (0.7 - wingsPercentage);
                 if (!ui->minReportsCheckBox->isChecked())
-                subsidiaryLedgerRep->appendLineinTable(dateString, name, parent, numOfItemsPerDate, moneyOfItems, currency, eurosOfItems, wingsPercentage);
+                    subsidiaryLedgerRep->appendLineinTable(dateString, name, parent, numOfItemsPerDate, moneyOfItems, currency, eurosOfItems, wingsPercentage);
             }
             previousDate = date;
 
             //Check if the Revenue is negative and append to Comments
             if ((*allSAleItemsList)[i]->customerPrice < 0)
             {
-//                qDebug() << "customerPrice: " << (*allSAleItemsList)[i]->customerPrice;
-//                qDebug() << "developerProceeds: " << (*allSAleItemsList)[i]->developerProceeds;
+                //                qDebug() << "customerPrice: " << (*allSAleItemsList)[i]->customerPrice;
+                //                qDebug() << "developerProceeds: " << (*allSAleItemsList)[i]->developerProceeds;
                 message.append(name + " on " + (*allSAleItemsList)[i]->date.toString("dd/MM/yyyy") + ", ");
             }
         }
@@ -519,6 +505,7 @@ void MainWindow::populateSubsidiaryLedgerRep(QDate fromDate, QDate toDate, QStri
 }
 
 void MainWindow::populateByCountryRep(QDate fromDate, QDate toDate, QString message, QMap <QString, QList<SaleItem*>* > saleItemPerAuthorMap)
+
 {
     QString country, name, previousName, previousCountry;
 
@@ -586,12 +573,12 @@ void MainWindow::populateByCountryRep(QDate fromDate, QDate toDate, QString mess
                 if (country == previousCountry)
                 {
                     if (!ui->minReportsCheckBox->isChecked())
-                    byCountryRep->appendLineinTable(previousName, previousCountry, numOfItemsPerCountry, eurosOfItemsPerCountry, prevWingsPercentage);
+                        byCountryRep->appendLineinTable(previousName, previousCountry, numOfItemsPerCountry, eurosOfItemsPerCountry, prevWingsPercentage);
                 }
                 else
                 {
                     if (!ui->minReportsCheckBox->isChecked())
-                    byCountryRep->appendLineinTable(previousName, previousCountry, numOfItemsPerCountry, eurosOfItemsPerCountry, prevWingsPercentage);
+                        byCountryRep->appendLineinTable(previousName, previousCountry, numOfItemsPerCountry, eurosOfItemsPerCountry, prevWingsPercentage);
                 }
                 numOfItemsPerCountry = numOfItems;
                 eurosOfItemsPerCountry = eurosOfItems;
@@ -606,7 +593,7 @@ void MainWindow::populateByCountryRep(QDate fromDate, QDate toDate, QString mess
             else
             {
                 if (!ui->minReportsCheckBox->isChecked())
-                byCountryRep->appendLineinTable(previousName, previousCountry, numOfItemsPerCountry, eurosOfItemsPerCountry, prevWingsPercentage);
+                    byCountryRep->appendLineinTable(previousName, previousCountry, numOfItemsPerCountry, eurosOfItemsPerCountry, prevWingsPercentage);
                 byCountryRep->appendTotalPerDesignInTable(previousName, numOfItemsPerDesign, eurosOfItemsPerDesign, prevWingsPercentage);
                 numOfItemsPerCountry = numOfItems;
                 eurosOfItemsPerCountry = eurosOfItems;
@@ -630,7 +617,7 @@ void MainWindow::populateByCountryRep(QDate fromDate, QDate toDate, QString mess
             }
         }
         if (!ui->minReportsCheckBox->isChecked())
-        byCountryRep->appendLineinTable(previousName, previousCountry, numOfItemsPerCountry, eurosOfItemsPerCountry, prevWingsPercentage);
+            byCountryRep->appendLineinTable(previousName, previousCountry, numOfItemsPerCountry, eurosOfItemsPerCountry, prevWingsPercentage);
         byCountryRep->appendTotalPerDesignInTable(name, numOfItemsPerDesign, eurosOfItemsPerDesign, prevWingsPercentage);
     }
     byCountryRep->appendTotalOfReportInTable(numOfItemsTotal, eurosOfItemsTotal, wingsRevenueTotal, designerRevenueTotal);
@@ -663,28 +650,160 @@ void MainWindow::populateByCountryRep(QDate fromDate, QDate toDate, QString mess
     delete byCountryRep;
 }
 
-void MainWindow::onAuthorsDesignsRespReceived(QStringList *list) {
-    // Populate the Authors' CheckList.
-    for (int i = 0; i < list->count(); i++)
-    {
-        QListWidgetItem *item = new QListWidgetItem;
-        item->setData( Qt::DisplayRole, (*list)[i] );
-        item->setData( Qt::CheckStateRole, Qt::Checked );
-        ui->listWidget->addItem(item);
+void appendLine(QStandardItemModel &model, const QStringList &fields) {
+    int i = 0;
+    for (auto field :fields) {
+        QStandardItem *item = new QStandardItem(field);
+        model.setItem(i, model.rowCount(), item);
+        i++;
     }
-    ui->listWidget->item(0)->setCheckState(Qt::Unchecked);
-
-    QString dailyReportsPath = AppSettings::instance()->reportsDirPath();
-
-    QList<QDate> dateOfReportList = mAppController->loadAppleReportFiles(dailyReportsPath, this);
-    upDateCalendars(dateOfReportList);
-    if (mAppController->mAllDatesList.isEmpty()){return;}
-    onDateClicked(dateOfReportList.last());
-
-    // Enable window
-    this->setEnabled(true);
-    QApplication::restoreOverrideCursor();
 }
+QStandardItemModel *MainWindow::byCountryModel() {
+    qDebug() << "byCountryModel()";
+    QStandardItemModel *model = new QStandardItemModel;
+
+    Purchases *purchases = new Purchases(ui->fromDateEdit->date(), ui->toDateEdit->date());
+
+    QString country, name, previousName, previousCountry;
+
+    int numOfItems = 0;
+    int numOfItemsPerCountry = 0;
+    int numOfItemsPerDesign = 0;
+    int numOfItemsTotal = 0;
+
+    float moneyOfItems = 0;
+    float moneyOfItemsPerCountry = 0;
+
+    float eurosOfItems = 0;
+    float eurosOfItemsPerCountry = 0;
+    float eurosOfItemsPerDesign = 0;
+    float eurosOfItemsTotal = 0;
+    float wingsRevenueTotal = 0;
+    float designerRevenueTotal = 0;
+
+    float wingsPercentage = 0;
+    float prevWingsPercentage = 0;
+
+    //    byCountryRep = new ByCountryRep;
+    //    byCountryRep->fromDate = fromDate.toString();
+    //    byCountryRep->toDate = toDate.toString();
+    //    byCountryRep->synthesizeSecondPartOfText();
+
+
+    QList<Purchase> purchasesList = purchases->purchaseList();
+    for (auto &purchase : purchasesList) {
+        //            name = purchase.realName;
+        country = purchase.propertyByName(Property::COUNTRY_CODE).stringValue();
+        qDebug() << country;
+        numOfItems = purchase.propertyByName(Property::UNITS).value().toInt();
+        moneyOfItems = purchase.propertyByName(Property::DEVELOPER_PROCEEDS).value().toFloat();
+        eurosOfItems = purchase.developerProceedsInEuros();
+
+        if (name == previousName && country == previousCountry) {
+            numOfItemsPerCountry += numOfItems;
+            moneyOfItemsPerCountry += moneyOfItems;
+            eurosOfItemsPerCountry += eurosOfItems;
+            numOfItemsPerDesign += numOfItems;
+            eurosOfItemsPerDesign += eurosOfItems;
+            numOfItemsTotal += numOfItems;
+            eurosOfItemsTotal += eurosOfItems;
+            wingsRevenueTotal += wingsPercentage * eurosOfItems;
+            designerRevenueTotal += 0.7 * eurosOfItems;
+        } else if (name == previousName && country !=previousCountry) {
+            if (country == previousCountry) {
+                if (!ui->minReportsCheckBox->isChecked()) {
+                    QStringList fields;
+                    fields <<  previousName <<  previousCountry
+                           << QString::number(numOfItemsPerCountry)
+                           << QString::number(eurosOfItemsPerCountry)
+                           << QString::number(prevWingsPercentage);
+                    appendLine(*model, fields);
+                }
+            } else {
+                if (!ui->minReportsCheckBox->isChecked()){
+                    QStringList fields;
+                    fields <<  previousName <<  previousCountry
+                           << QString::number(numOfItemsPerCountry)
+                           << QString::number(eurosOfItemsPerCountry)
+                           << QString::number(prevWingsPercentage);
+                    appendLine(*model, fields);
+                }
+            }
+            numOfItemsPerCountry = numOfItems;
+            eurosOfItemsPerCountry = eurosOfItems;
+            numOfItemsPerDesign += numOfItems;
+            moneyOfItemsPerCountry += moneyOfItems;
+            eurosOfItemsPerDesign += eurosOfItems;
+            numOfItemsTotal += numOfItems;
+            eurosOfItemsTotal += eurosOfItems;
+            wingsRevenueTotal += wingsPercentage * eurosOfItems;
+            designerRevenueTotal += (0.7 - wingsPercentage) * eurosOfItems;
+        } else {
+//            if (!ui->minReportsCheckBox->isChecked())
+//                byCountryRep->appendLineinTable(previousName, previousCountry, numOfItemsPerCountry, eurosOfItemsPerCountry, prevWingsPercentage);
+//            byCountryRep->appendTotalPerDesignInTable(previousName, numOfItemsPerDesign, eurosOfItemsPerDesign, prevWingsPercentage);
+            numOfItemsPerCountry = numOfItems;
+            eurosOfItemsPerCountry = eurosOfItems;
+            numOfItemsPerDesign = numOfItems;
+            moneyOfItemsPerCountry = moneyOfItems;
+            eurosOfItemsPerDesign = eurosOfItems;
+            numOfItemsTotal += numOfItems;
+            eurosOfItemsTotal += eurosOfItems;
+            wingsRevenueTotal += wingsPercentage * eurosOfItems;
+            designerRevenueTotal += (0.7 - wingsPercentage) * eurosOfItems;
+        }
+        previousCountry = country;
+        previousName = name;
+        prevWingsPercentage = wingsPercentage;
+
+        //Check if the Revenue is negative and append to Comments
+        if (purchase.propertyByName(Property::CUSTOMER_PRICE).value().toFloat() < 0) {
+            //qDebug() << "diavasma" << purchase.customerPrice;
+            //                message.append(previousName + " on " + purchase.date().toString("dd-MM-yyyy") + ", ");
+        }
+    }
+
+    QStringList headers {
+        "Design", "Country", "Items",
+        "Total (€)", "Apple %", "Apple Revenue",
+        "SoftwareHouse %", "SoftwareHouse Revenue"
+    };
+    int i = 0;
+    for (auto header : headers) {
+        QStandardItem *headerItem = new QStandardItem;
+        model->setHorizontalHeaderItem(i, headerItem);
+        i++;
+    }
+//    byCountryRep->appendLineinTable(previousName, previousCountry, numOfItemsPerCountry,
+//                                    eurosOfItemsPerCountry, prevWingsPercentage);
+//    byCountryRep->appendTotalOfReportInTable(numOfItemsTotal, eurosOfItemsTotal, wingsRevenueTotal,
+//                                             designerRevenueTotal);
+//    byCountryRep->appendFinalPartOfText();
+
+    ui->reportTableView->setModel(model);
+    ui->reportTableView->resizeColumnsToContents();
+
+
+    //    if(message.left(5) != "There")
+    //    {
+    //        if (!message.isEmpty())
+    //        {
+    //            message = message.left(message.length() - 2);
+    //            message.append(" have negative revenues.");
+    //        }
+    //    }
+
+//    byCountryRep->allAuthors = byCountryRep->allAuthors.left(byCountryRep->allAuthors.length() - 2);
+
+    //    byCountryRep->comments = message;
+//    byCountryRep->synthesizeFirstPartOfText();
+
+//    ui->headerTextEdit->setHtml(byCountryRep->mHtmlText0 + byCountryRep->mHtmlText1);
+//    ui->tableTextEdit->setHtml(byCountryRep->mHtmlText2);
+//delete byCountryRep;
+}
+
+
 
 void MainWindow::onExportReportClicked()
 {
@@ -715,7 +834,6 @@ void MainWindow::onExportReportClicked()
     else {return;}
 }
 
-void MainWindow::onQuitClicked()
-{
+void MainWindow::onQuitClicked() {
     this->close();
 }

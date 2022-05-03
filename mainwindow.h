@@ -45,6 +45,7 @@ private:
     void populateReportSheet(QDate fromDate, QDate toDate, QString message, QMap <QString, QList<SaleItem*>* >);
     void populateSubsidiaryLedgerRep(QDate fromDate, QDate toDate, QString message, QMap <QString, QList<SaleItem*>* >);
     void populateByCountryRep(QDate fromDate, QDate toDate, QString message, QMap <QString, QList<SaleItem*>* >);
+    QStandardItemModel *byCountryModel();
 
     QStringList populateAuthorsSelectedList();
     void upDateCalendars(QList<QDate> dateOfReportList);
@@ -55,7 +56,6 @@ private:
 private slots:
     void onDateClicked(QDate date);
     void onDoneClicked();
-    void onAuthorsDesignsRespReceived(QStringList* list);
     void onExportReportClicked();
     void onQuitClicked();
     void onListWidgetItemClicked(QListWidgetItem*item);

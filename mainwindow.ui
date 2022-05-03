@@ -25,7 +25,7 @@
        <enum>QTabWidget::North</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="dailyReportTab">
        <attribute name="title">
@@ -108,7 +108,7 @@
         <string>Various Reports</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
-        <item row="0" column="1">
+        <item row="0" column="2">
          <widget class="QWidget" name="widget" native="true">
           <property name="minimumSize">
            <size>
@@ -345,6 +345,9 @@
            </item>
           </layout>
          </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QTableView" name="reportTableView"/>
         </item>
        </layout>
       </widget>

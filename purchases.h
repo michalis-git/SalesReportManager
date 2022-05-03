@@ -18,6 +18,7 @@ class Purchases
 public:
     Purchases(const QDate &fromDate, const QDate &toDate);
     QStandardItemModel *purchasesModel() const;
+    const QList<Purchase> &purchaseList() const;
 };
 
 #endif // PURCHASES_H
