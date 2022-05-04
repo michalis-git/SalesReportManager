@@ -651,11 +651,12 @@ void MainWindow::populateByCountryRep(QDate fromDate, QDate toDate, QString mess
 }
 
 void appendLine(QStandardItemModel &model, const QStringList &fields) {
-    int i = 0;
+    int row = model.rowCount();
+    int j = 0;
     for (auto field :fields) {
         QStandardItem *item = new QStandardItem(field);
-        model.setItem(i, model.rowCount(), item);
-        i++;
+        model.setItem(row, j, item);
+        j++;
     }
 }
 QStandardItemModel *MainWindow::byCountryModel() {
@@ -689,12 +690,22 @@ QStandardItemModel *MainWindow::byCountryModel() {
     //    byCountryRep->toDate = toDate.toString();
     //    byCountryRep->synthesizeSecondPartOfText();
 
+    QStringList headers;
+        headers << "Design" << "Country" << "Items"
+        << "Total (€)" << "Apple %" << "Apple Revenue"
+        << "SoftwareHouse %" << "SoftwareHouse Revenue";
+
+    int i = 0;
+    for (auto header : headers) {
+        QStandardItem *headerItem = new QStandardItem(header);
+        model->setHorizontalHeaderItem(i, headerItem);
+        i++;
+    }
 
     QList<Purchase> purchasesList = purchases->purchaseList();
     for (auto &purchase : purchasesList) {
-        //            name = purchase.realName;
+        name = purchase.propertyByName(Property::TITLE).stringValue();
         country = purchase.propertyByName(Property::COUNTRY_CODE).stringValue();
-        qDebug() << country;
         numOfItems = purchase.propertyByName(Property::UNITS).value().toInt();
         moneyOfItems = purchase.propertyByName(Property::DEVELOPER_PROCEEDS).value().toFloat();
         eurosOfItems = purchase.developerProceedsInEuros();
@@ -718,6 +729,7 @@ QStandardItemModel *MainWindow::byCountryModel() {
                            << QString::number(eurosOfItemsPerCountry)
                            << QString::number(prevWingsPercentage);
                     appendLine(*model, fields);
+//                    byCountryRep->appendLineinTable(previousName, previousCountry, numOfItemsPerCountry, eurosOfItemsPerCountry, prevWingsPercentage);
                 }
             } else {
                 if (!ui->minReportsCheckBox->isChecked()){
@@ -739,9 +751,23 @@ QStandardItemModel *MainWindow::byCountryModel() {
             wingsRevenueTotal += wingsPercentage * eurosOfItems;
             designerRevenueTotal += (0.7 - wingsPercentage) * eurosOfItems;
         } else {
-//            if (!ui->minReportsCheckBox->isChecked())
+            if (!ui->minReportsCheckBox->isChecked()) {
 //                byCountryRep->appendLineinTable(previousName, previousCountry, numOfItemsPerCountry, eurosOfItemsPerCountry, prevWingsPercentage);
+                QStringList fields;
+                fields <<  previousName <<  previousCountry
+                       << QString::number(numOfItemsPerCountry)
+                       << QString::number(eurosOfItemsPerCountry)
+                       << QString::number(prevWingsPercentage);
+                appendLine(*model, fields);
+            }
 //            byCountryRep->appendTotalPerDesignInTable(previousName, numOfItemsPerDesign, eurosOfItemsPerDesign, prevWingsPercentage);
+            QStringList fields;
+            fields <<  previousName <<  ""
+                   << QString::number(numOfItemsPerDesign)
+                   << QString::number(numOfItemsPerCountry)
+                   << QString::number(eurosOfItemsPerCountry)
+                   << QString::number(prevWingsPercentage);
+            appendLine(*model, fields);
             numOfItemsPerCountry = numOfItems;
             eurosOfItemsPerCountry = eurosOfItems;
             numOfItemsPerDesign = numOfItems;
@@ -763,21 +789,26 @@ QStandardItemModel *MainWindow::byCountryModel() {
         }
     }
 
-    QStringList headers {
-        "Design", "Country", "Items",
-        "Total (€)", "Apple %", "Apple Revenue",
-        "SoftwareHouse %", "SoftwareHouse Revenue"
-    };
-    int i = 0;
-    for (auto header : headers) {
-        QStandardItem *headerItem = new QStandardItem;
-        model->setHorizontalHeaderItem(i, headerItem);
-        i++;
-    }
+
 //    byCountryRep->appendLineinTable(previousName, previousCountry, numOfItemsPerCountry,
 //                                    eurosOfItemsPerCountry, prevWingsPercentage);
+    QStringList fields2;
+    fields2 <<  previousName <<  previousCountry
+           << QString::number(numOfItemsPerCountry)
+           << QString::number(eurosOfItemsPerCountry)
+           << QString::number(prevWingsPercentage);
+    appendLine(*model, fields2);
 //    byCountryRep->appendTotalOfReportInTable(numOfItemsTotal, eurosOfItemsTotal, wingsRevenueTotal,
 //                                             designerRevenueTotal);
+    QStringList fields3;
+    fields3 <<  "" <<  ""
+           << QString::number(numOfItemsTotal)
+           << QString::number(eurosOfItemsTotal)
+           << ""
+           << QString::number(wingsRevenueTotal)
+           << ""
+           << QString::number(designerRevenueTotal);
+    appendLine(*model, fields3);
 //    byCountryRep->appendFinalPartOfText();
 
     ui->reportTableView->setModel(model);
