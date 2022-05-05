@@ -702,6 +702,9 @@ QStandardItemModel *MainWindow::byCountryModel() {
         i++;
     }
 
+
+    QStringList titlesList;
+
     QList<Purchase> purchasesList = purchases->purchaseList();
     for (auto &purchase : purchasesList) {
         name = purchase.propertyByName(Property::TITLE).stringValue();
@@ -709,6 +712,12 @@ QStandardItemModel *MainWindow::byCountryModel() {
         numOfItems = purchase.propertyByName(Property::UNITS).value().toInt();
         moneyOfItems = purchase.propertyByName(Property::DEVELOPER_PROCEEDS).value().toFloat();
         eurosOfItems = purchase.developerProceedsInEuros();
+
+        if (!titlesList.contains(name))
+            titlesList << name;
+        else {
+
+        }
 
         if (name == previousName && country == previousCountry) {
             numOfItemsPerCountry += numOfItems;

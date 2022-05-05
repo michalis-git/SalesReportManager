@@ -80,6 +80,12 @@ public:
         PERIOD,
         CATEGORY,
         CMB,
+
+        //Design by country
+        NUMBER_OF_ITEMS,
+        VALUE_OF_ITEMS_IN_CURRENCY,
+        COMPANY_REVENUE,
+        APPLE_REVENUE,
     };
 
 

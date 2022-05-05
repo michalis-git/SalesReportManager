@@ -27,6 +27,7 @@ SOURCES += main.cpp\
     httprequest.cpp \
     currency.cpp \
   preferecesdialog.cpp \
+  productsbycountry.cpp \
   property.cpp \
   purchase.cpp \
   purchases.cpp \
@@ -45,6 +46,7 @@ HEADERS  += mainwindow.h \
     decompresser.h \
     exchangerates.h \
     preferecesdialog.h \
+    productsbycountry.h \
     property.h \
     purchase.h \
     purchases.h \
