@@ -20,8 +20,9 @@ class ProductsByCountry
 {
     QMap<QString, CountryPurchasesMap> m_map;
     QStandardItemModel *m_model;
+    void setHeadersToModel();
     void appendLineToModel(const QString &title, const QString &country,
-                           const int &numberOfItems, const float &valueOfItems);
+                           const int &numberOfItems, const float &valueOfItems) const;
 public:
     ProductsByCountry(const Purchases &purchases);
     QStandardItemModel *getModel() const;

@@ -1,5 +1,7 @@
 #include "productsbycountry.h"
 
+#include <QStandardItem>
+
 
 ProductsByCountry::ProductsByCountry(const Purchases &purchases) {
     QList<Purchase> purchasesList = purchases.purchaseList();
@@ -20,6 +22,9 @@ ProductsByCountry::ProductsByCountry(const Purchases &purchases) {
             countryPurchasesMap.insert(country, PurchasesList { purchase });
         }
     }
+
+    m_model = new QStandardItemModel;
+    setHeadersToModel();
 }
 
 QStandardItemModel *ProductsByCountry::getModel() const {
@@ -45,7 +50,30 @@ QStandardItemModel *ProductsByCountry::getModel() const {
     return m_model;
 }
 
+void ProductsByCountry::setHeadersToModel() {
+  QStringList headers;
+  headers << "Design" << "Country" << "Items"
+          << "Total (€)" << "Apple %" << "Apple Revenue"
+          << "SoftwareHouse %" << "SoftwareHouse Revenue";
+
+  int i = 0;
+  for (auto header : headers) {
+    QStandardItem *headerItem = new QStandardItem(header);
+    m_model->setHorizontalHeaderItem(i, headerItem);
+    i++;
+  }
+
+}
+
 void ProductsByCountry::appendLineToModel(const QString &title, const QString &country,
-                                          const int &numberOfItems, const float &valueOfItems) {
-    \QStandardItem *item = new QStandardItem()
+                                          const int &numberOfItems, const float &valueOfItems) const {
+  QStringList fields;
+  fields << title << country << QString::number(numberOfItems) << QString::number((valueOfItems));
+  int j = 0;
+  int row = m_model->rowCount();
+  for (auto &field : fields) {
+    QStandardItem *item = new QStandardItem(field);
+    m_model->setItem(row, j, item);
+    j++;
+  }
 }
