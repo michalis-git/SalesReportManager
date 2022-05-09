@@ -706,6 +706,7 @@ QStandardItemModel *MainWindow::byCountryModel() {
     Purchases purchases(ui->fromDateEdit->date(), ui->toDateEdit->date());
     ProductsByCountry productByCountry(purchases);
     ui->reportTableView->setModel(productByCountry.getModel());
+
 }
 
 
