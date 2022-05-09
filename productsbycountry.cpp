@@ -93,10 +93,9 @@ void ProductsByCountry::styleItem(int row, const QString &header, QStandardItem 
         font.setBold(true);
         item->setFont(font);
         item->setBackground(QBrush(QColor("#daedf4")));
-        item->setData(QVariant(QBrush(Qt::green)), Qt::BackgroundRole);
-        m_model->setHeaderData(row, Qt::Orientation::Vertical,
-                               QVariant(QBrush(QColor("#daedf4"))),
-                               Qt::BackgroundColorRole);
+//        m_model->setHeaderData(row, Qt::Orientation::Vertical,
+//                               QVariant(QBrush(QColor("#daedf4"))),
+//                               Qt::BackgroundColorRole);
     }
 }
 
@@ -114,7 +113,8 @@ void ProductsByCountry::appendLineToModel(const QString &vHeader, const QString 
     }
 
     QStandardItem *headerItem = new QStandardItem(vHeader);
-    headerItem->setBackground(QBrush(Qt::red));
-//    styleItem(row, vHeader, headerItem);
+//    headerItem->setBackground(QBrush("#daedf4"));
+    styleItem(row, vHeader, headerItem);
     m_model->setVerticalHeaderItem(row, headerItem);
+
 }

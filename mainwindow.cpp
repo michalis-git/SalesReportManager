@@ -683,7 +683,6 @@ QStandardItemModel *MainWindow::byCountryModel() {
 ////    byCountryRep->appendFinalPartOfText();
 
 //    ui->reportTableView->setModel(model);
-//    ui->reportTableView->resizeColumnsToContents();
 
 
     //    if(message.left(5) != "There")
@@ -706,6 +705,7 @@ QStandardItemModel *MainWindow::byCountryModel() {
     Purchases purchases(ui->fromDateEdit->date(), ui->toDateEdit->date());
     ProductsByCountry productByCountry(purchases);
     ui->reportTableView->setModel(productByCountry.getModel());
+    ui->reportTableView->resizeColumnsToContents();
 
 }
 
