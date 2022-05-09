@@ -10,6 +10,7 @@
 #include <QDir>
 
 
+
 QString Purchases::decompressFile(const QDate &date) {
     // Gets the file name from the selected date and creates the full path of the file.
     QString dateStr = date.toString("yyyyMMdd");
@@ -32,6 +33,8 @@ QString Purchases::decompressFile(const QDate &date) {
 }
 
 Purchases::Purchases(const QDate &fromDate, const QDate &toDate) {
+    m_startDate = fromDate;
+    m_endDate = toDate;
     m_purchasesModel = new QStandardItemModel;
     QDate date = fromDate;
     while(date <= toDate) {
@@ -63,6 +66,13 @@ Purchases::Purchases(const QDate &fromDate, const QDate &toDate) {
     }
 }
 
+const QDate &Purchases::startDate() const {
+    return m_startDate;
+}
+
+const QDate &Purchases::endDate() const {
+    return m_endDate;
+}
 
 QStandardItemModel *Purchases::purchasesModel() const {
 //    qDebug() << m_purchaseMap.values().count();

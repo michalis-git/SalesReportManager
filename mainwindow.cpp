@@ -30,6 +30,7 @@
 #include <QScrollBar>
 #include <QLayoutItem>
 
+#include "balancesheet.h"
 #include "productsbycountry.h"
 
 bool authorLessThan(const SaleItem* left, const SaleItem* right) {
@@ -181,7 +182,8 @@ void MainWindow::onDoneClicked() {
         foreach (QString key, saleItemPerAuthorMap.keys()) {
             qSort((saleItemPerAuthorMap[key])->begin(), (saleItemPerAuthorMap[key])->end(), authorLessThan );
         }
-        populateReportSheet(fromDate, toDate, message, saleItemPerAuthorMap);
+//        populateReportSheet(fromDate, toDate, message, saleItemPerAuthorMap);
+        balanceSheet();
     } else if (ui->comboBox->currentText() == "Subsidiary Ledger") {
         populateSubsidiaryLedgerRep(fromDate, toDate, message, saleItemPerAuthorMap);
     } else if (ui->comboBox->currentText() == "Design by Country") {
@@ -506,207 +508,28 @@ void MainWindow::populateSubsidiaryLedgerRep(QDate fromDate, QDate toDate, QStri
     delete subsidiaryLedgerRep;
 }
 
-void MainWindow::populateByCountryRep(QDate fromDate, QDate toDate, QString message, QMap <QString, QList<SaleItem*>* > saleItemPerAuthorMap)
-
-{
-    QString country, name, previousName, previousCountry;
-
-    int numOfItems = 0;
-    int numOfItemsPerCountry = 0;
-    int numOfItemsPerDesign = 0;
-    int numOfItemsTotal = 0;
-
-    float moneyOfItems = 0;
-    float moneyOfItemsPerCountry = 0;
-
-    float eurosOfItems = 0;
-    float eurosOfItemsPerCountry = 0;
-    float eurosOfItemsPerDesign = 0;
-    float eurosOfItemsTotal = 0;
-    float wingsRevenueTotal = 0;
-    float designerRevenueTotal = 0;
-
-    float wingsPercentage = 0;
-    float prevWingsPercentage = 0;
-
-    byCountryRep = new ByCountryRep;
-    byCountryRep->fromDate = fromDate.toString();
-    byCountryRep->toDate = toDate.toString();
-    byCountryRep->synthesizeSecondPartOfText();
-
-    foreach (QString key, saleItemPerAuthorMap.keys())
-    {
-        QList<SaleItem*>* allSAleItemsList = saleItemPerAuthorMap[key];
-        if (allSAleItemsList->isEmpty()){continue;}
-
-        byCountryRep->author = key;
-
-        previousName = (*allSAleItemsList)[0]->realName;
-        if (key == "Wings Systems") { prevWingsPercentage = 0.7f; }
-        else { prevWingsPercentage = (*allSAleItemsList)[0]->wingsPercentage; }
-        previousCountry = (*allSAleItemsList)[0]->countryCode;
-        numOfItemsPerCountry = eurosOfItemsPerCountry = 0;
-        numOfItemsPerDesign = eurosOfItemsPerDesign = 0;
-
-        for (int i = 0; i < allSAleItemsList->count(); i++)
-        {
-            name = (*allSAleItemsList)[i]->realName;
-            country = (*allSAleItemsList)[i]->countryCode;
-            numOfItems = (*allSAleItemsList)[i]->units.toInt();
-            moneyOfItems = (*allSAleItemsList)[i]->developerProceeds;
-            eurosOfItems = (*allSAleItemsList)[i]->developerProceedsinEuros;
-            if (key == "Wings Systems") { wingsPercentage = 0.7f; }
-            else { wingsPercentage = (*allSAleItemsList)[i]->wingsPercentage; }
-
-            if (name == previousName && country ==previousCountry)
-            {
-                numOfItemsPerCountry += numOfItems;
-                moneyOfItemsPerCountry += moneyOfItems;
-                eurosOfItemsPerCountry += eurosOfItems;
-                numOfItemsPerDesign += numOfItems;
-                eurosOfItemsPerDesign += eurosOfItems;
-                numOfItemsTotal += numOfItems;
-                eurosOfItemsTotal += eurosOfItems;
-                wingsRevenueTotal += wingsPercentage * eurosOfItems;
-                designerRevenueTotal += (0.7 - wingsPercentage) * eurosOfItems;
-            }
-            else if (name == previousName && country !=previousCountry)
-            {
-                if (country == previousCountry)
-                {
-                    if (!ui->minReportsCheckBox->isChecked())
-                        byCountryRep->appendLineinTable(previousName, previousCountry, numOfItemsPerCountry, eurosOfItemsPerCountry, prevWingsPercentage);
-                }
-                else
-                {
-                    if (!ui->minReportsCheckBox->isChecked())
-                        byCountryRep->appendLineinTable(previousName, previousCountry, numOfItemsPerCountry, eurosOfItemsPerCountry, prevWingsPercentage);
-                }
-                numOfItemsPerCountry = numOfItems;
-                eurosOfItemsPerCountry = eurosOfItems;
-                numOfItemsPerDesign += numOfItems;
-                moneyOfItemsPerCountry += moneyOfItems;
-                eurosOfItemsPerDesign += eurosOfItems;
-                numOfItemsTotal += numOfItems;
-                eurosOfItemsTotal += eurosOfItems;
-                wingsRevenueTotal += wingsPercentage * eurosOfItems;
-                designerRevenueTotal += (0.7 - wingsPercentage) * eurosOfItems;
-            }
-            else
-            {
-                if (!ui->minReportsCheckBox->isChecked())
-                    byCountryRep->appendLineinTable(previousName, previousCountry, numOfItemsPerCountry, eurosOfItemsPerCountry, prevWingsPercentage);
-                byCountryRep->appendTotalPerDesignInTable(previousName, numOfItemsPerDesign, eurosOfItemsPerDesign, prevWingsPercentage);
-                numOfItemsPerCountry = numOfItems;
-                eurosOfItemsPerCountry = eurosOfItems;
-                numOfItemsPerDesign = numOfItems;
-                moneyOfItemsPerCountry = moneyOfItems;
-                eurosOfItemsPerDesign = eurosOfItems;
-                numOfItemsTotal += numOfItems;
-                eurosOfItemsTotal += eurosOfItems;
-                wingsRevenueTotal += wingsPercentage * eurosOfItems;
-                designerRevenueTotal += (0.7 - wingsPercentage) * eurosOfItems;
-            }
-            previousCountry = country;
-            previousName = name;
-            prevWingsPercentage = wingsPercentage;
-
-            //Check if the Revenue is negative and append to Comments
-            if ((*allSAleItemsList)[i]->customerPrice < 0)
-            {
-                //qDebug() << "diavasma" << (*allSAleItemsList)[i]->customerPrice;
-                message.append(previousName + " on " + (*allSAleItemsList)[i]->date.toString("dd/MM/yyyy") + ", ");
-            }
-        }
-        if (!ui->minReportsCheckBox->isChecked())
-            byCountryRep->appendLineinTable(previousName, previousCountry, numOfItemsPerCountry, eurosOfItemsPerCountry, prevWingsPercentage);
-        byCountryRep->appendTotalPerDesignInTable(name, numOfItemsPerDesign, eurosOfItemsPerDesign, prevWingsPercentage);
-    }
-    byCountryRep->appendTotalOfReportInTable(numOfItemsTotal, eurosOfItemsTotal, wingsRevenueTotal, designerRevenueTotal);
-    byCountryRep->appendFinalPartOfText();
-
-    if(message.left(5) != "There")
-    {
-        if (!message.isEmpty())
-        {
-            message = message.left(message.length() - 2);
-            message.append(" have negative revenues.");
-        }
-    }
-
-    for(int i = 0; i < ui->listWidget->count(); i++)
-    {
-        if (ui->listWidget->item(i)->checkState())
-        {
-            byCountryRep->allAuthors.append(ui->listWidget->item(i)->text() + ", ");
-        }
-    }
-    byCountryRep->allAuthors = byCountryRep->allAuthors.left(byCountryRep->allAuthors.length() - 2);
-
-    byCountryRep->comments = message;
-    byCountryRep->synthesizeFirstPartOfText();
-
-    ui->headerTextEdit->setHtml(byCountryRep->mHtmlText0 + byCountryRep->mHtmlText1);
-    ui->tableTextEdit->setHtml(byCountryRep->mHtmlText2);
-
-    delete byCountryRep;
-}
-
 QStandardItemModel *MainWindow::byCountryModel() {
-    qDebug() << "byCountryModel()";
-
-
-
-
-
-
-
-////    byCountryRep->appendLineinTable(previousName, previousCountry, numOfItemsPerCountry,
-////                                    eurosOfItemsPerCountry, prevWingsPercentage);
-//    QStringList fields2;
-//    fields2 <<  previousName <<  previousCountry
-//           << QString::number(numOfItemsPerCountry)
-//           << QString::number(eurosOfItemsPerCountry)
-//           << QString::number(prevWingsPercentage);
-//    appendLine(*model, fields2);
-////    byCountryRep->appendTotalOfReportInTable(numOfItemsTotal, eurosOfItemsTotal, wingsRevenueTotal,
-////                                             designerRevenueTotal);
-//    QStringList fields3;
-//    fields3 <<  "" <<  ""
-//           << QString::number(numOfItemsTotal)
-//           << QString::number(eurosOfItemsTotal)
-//           << ""
-//           << QString::number(wingsRevenueTotal)
-//           << ""
-//           << QString::number(designerRevenueTotal);
-//    appendLine(*model, fields3);
-////    byCountryRep->appendFinalPartOfText();
-
-//    ui->reportTableView->setModel(model);
-
-
-    //    if(message.left(5) != "There")
-    //    {
-    //        if (!message.isEmpty())
-    //        {
-    //            message = message.left(message.length() - 2);
-    //            message.append(" have negative revenues.");
-    //        }
-    //    }
-
-//    byCountryRep->allAuthors = byCountryRep->allAuthors.left(byCountryRep->allAuthors.length() - 2);
-
-    //    byCountryRep->comments = message;
-//    byCountryRep->synthesizeFirstPartOfText();
-
-//    ui->headerTextEdit->setHtml(byCountryRep->mHtmlText0 + byCountryRep->mHtmlText1);
-//    ui->tableTextEdit->setHtml(byCountryRep->mHtmlText2);
-//delete byCountryRep;
     Purchases purchases(ui->fromDateEdit->date(), ui->toDateEdit->date());
     ProductsByCountry productByCountry(purchases);
     ui->reportTableView->setModel(productByCountry.getModel());
     ui->reportTableView->resizeColumnsToContents();
 
+    ui->titleLabel->setText(productByCountry.title());
+    ui->descriptionLabel->setText(productByCountry.description());
+    ui->startDateLabel->setText(productByCountry.startDate().toString("dd-MM-yyyy"));
+    ui->endDateLabel->setText(productByCountry.endDate().toString("dd-MM-yyyy"));
+}
+
+QStandardItemModel *MainWindow::balanceSheet() {
+    Purchases purchases(ui->fromDateEdit->date(), ui->toDateEdit->date());
+    BalanceSheet balanceSheet(purchases);
+    ui->reportTableView->setModel(balanceSheet.getModel());
+    ui->reportTableView->resizeColumnsToContents();
+
+    ui->titleLabel->setText(balanceSheet.title());
+    ui->descriptionLabel->setText(balanceSheet.description());
+    ui->startDateLabel->setText(balanceSheet.startDate().toString("dd-MM-yyyy"));
+    ui->endDateLabel->setText(balanceSheet.endDate().toString("dd-MM-yyyy"));
 }
 
 

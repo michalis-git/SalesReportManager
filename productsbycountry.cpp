@@ -5,6 +5,11 @@
 
 
 ProductsByCountry::ProductsByCountry(const Purchases &purchases) {
+    m_title = QObject::tr("Subsidiary Ledger Report");
+    m_description = QObject::tr("This report presents all the purchases of the selected time period.");
+    m_description.append("The purchases are being sorted and summed by date. The date format is dd/mm/yyyy.");
+    m_startDate = purchases.startDate();
+    m_endDate = purchases.endDate();
     QList<Purchase> purchasesList = purchases.purchaseList();
     for (auto &purchase : purchasesList) {
         QString title = purchase.propertyByName(Property::TITLE).stringValue();
@@ -66,6 +71,22 @@ QStandardItemModel *ProductsByCountry::getModel() const {
     return m_model;
 }
 
+const QString &ProductsByCountry::title() const {
+    return m_title;
+}
+
+const QString &ProductsByCountry::description() const {
+    return m_description;
+}
+
+const QDate &ProductsByCountry::startDate() const {
+    return m_startDate;
+}
+
+const QDate &ProductsByCountry::endDate() const {
+    return m_endDate;
+}
+
 void ProductsByCountry::setHeadersToModel() {
     QStringList headers;
     headers << "Product" << "Country" << "Items"
@@ -93,9 +114,9 @@ void ProductsByCountry::styleItem(int row, const QString &header, QStandardItem 
         font.setBold(true);
         item->setFont(font);
         item->setBackground(QBrush(QColor("#daedf4")));
-//        m_model->setHeaderData(row, Qt::Orientation::Vertical,
-//                               QVariant(QBrush(QColor("#daedf4"))),
-//                               Qt::BackgroundColorRole);
+        //        m_model->setHeaderData(row, Qt::Orientation::Vertical,
+        //                               QVariant(QBrush(QColor("#daedf4"))),
+        //                               Qt::BackgroundColorRole);
     }
 }
 
@@ -113,7 +134,7 @@ void ProductsByCountry::appendLineToModel(const QString &vHeader, const QString 
     }
 
     QStandardItem *headerItem = new QStandardItem(vHeader);
-//    headerItem->setBackground(QBrush("#daedf4"));
+    //    headerItem->setBackground(QBrush("#daedf4"));
     styleItem(row, vHeader, headerItem);
     m_model->setVerticalHeaderItem(row, headerItem);
 

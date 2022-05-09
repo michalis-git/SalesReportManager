@@ -19,6 +19,9 @@ typedef QMap<QString, PurchasesList> CountryPurchasesMap;
 
 class ProductsByCountry
 {
+    QString m_title;
+    QString m_description;
+    QDate m_startDate, m_endDate;
     QMap<QString, CountryPurchasesMap> m_map;
     QStandardItemModel *m_model;
     void setHeadersToModel();
@@ -28,6 +31,10 @@ class ProductsByCountry
 public:
     ProductsByCountry(const Purchases &purchases);
     QStandardItemModel *getModel() const;
+    const QString &title() const;
+    const QString &description() const;
+    const QDate &startDate() const;
+    const QDate &endDate() const;
 };
 
 #endif // PRODUCTSBYCOUNTRY_H
