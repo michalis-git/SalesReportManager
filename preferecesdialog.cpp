@@ -16,7 +16,7 @@ PreferecesDialog::PreferecesDialog(QWidget *parent) :
 
     connect(ui->reportsBrowseBtn, &QPushButton::clicked, this, &PreferecesDialog::onBrowseReportsClicked);
     connect(ui->ratesBrowseBtn, &QPushButton::clicked, this, &PreferecesDialog::onBrowseRatesClicked);
-    connect(ui->applePercentageSpinBox, &QDoubleSpinBox::valueChanged, this, &PreferecesDialog::onAppleValueChanged);
+//    connect(ui->applePercentageSpinBox, &QDoubleSpinBox::valueChanged, this, &PreferecesDialog::onAppleValueChanged);
 }
 
 PreferecesDialog::~PreferecesDialog() {

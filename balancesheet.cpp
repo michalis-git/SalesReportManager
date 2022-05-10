@@ -6,9 +6,9 @@
 
 
 BalanceSheet::BalanceSheet(const Purchases &purchases) {
-  m_title = QObject::tr("Subsidiary Ledger Report");
-  m_description = QObject::tr("This report presents all the purchases of the selected time period.");
-  m_description.append("The purchases are being sorted and summed by date. The date format is dd/mm/yyyy.");
+  m_title = QObject::tr("Balance Sheet Report");
+  m_description = QObject::tr("This report presents the purchases of every design in each currency that the design has been purchased. ");
+  m_description.append("The purchases are being summed for every design and at the end of the report. The date format is dd/mm/yyyy.");
   m_startDate = purchases.startDate();
   m_endDate = purchases.endDate();
   QList<Purchase> purchasesList = purchases.purchaseList();
@@ -88,8 +88,8 @@ void BalanceSheet::setHeadersToModel() {
   QStringList headers;
   headers << "Product" << "Items" << "Revenue"
           << "Currency" << "Revenue €"
-          << "Apple %" << "Apple Revenue %"
-          << "SoftwareHouse %" << "SoftwareHouse Revenue";
+          << "Apple %" << "Apple €"
+          << "SoftwareHouse %" << "SoftwareHouse €";
 
   int i = 0;
   for (auto header : headers) {
@@ -100,7 +100,7 @@ void BalanceSheet::setHeadersToModel() {
 
 }
 
-void BalanceSheet::styleItem(int row, const QString &header, QStandardItem *item) const {
+void BalanceSheet::styleItem(const QString &header, QStandardItem *item) const {
   if (header == "Total") {
     QFont  font = item->font();
     font.setBold(true);
@@ -132,13 +132,13 @@ void BalanceSheet::appendLineToModel(const QString &vHeader, const QString &titl
   int row = m_model->rowCount();
   for (auto &field : fields) {
     QStandardItem *item = new QStandardItem(field);
-    styleItem(row, vHeader, item);
+    styleItem(vHeader, item);
     m_model->setItem(row, j, item);
     j++;
   }
 
   QStandardItem *headerItem = new QStandardItem(vHeader);
-  styleItem(row, vHeader, headerItem);
+  styleItem(vHeader, headerItem);
   m_model->setVerticalHeaderItem(row, headerItem);
 
 }
