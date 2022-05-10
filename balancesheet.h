@@ -16,8 +16,8 @@ class BalanceSheet
     QMap<QString, PurchasesList> m_map;
     QStandardItemModel *m_model;
     void setHeadersToModel();
-    void appendLineToModel(const QString &vHeader, const QString &title, const QString &country,
-                           const int &numberOfItems, const float &valueOfItems) const;
+    void appendLineToModel(const QString &vHeader, const QString &title,
+                           const int &numberOfItems, const float &valueInCurrency, const QString &currency, const float &valueInBaseCurrency) const;
     void styleItem(int row, const QString &header, QStandardItem *item) const;
 public:
     BalanceSheet(const Purchases &purchases);

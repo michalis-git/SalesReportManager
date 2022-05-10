@@ -27,6 +27,7 @@ bool ExchangeRates::initialize(const QString &ratesPath, const QString &baseCurr
   bool success;
   QString ratesPathToBase = ratesPath + QDir::separator() + baseCurrency;
   if (QDir(ratesPathToBase).exists()) {
+//    qDebug() << "exists";
     populateRatesMap(ratesPathToBase);
     success = true;
   } else
@@ -92,7 +93,7 @@ void ExchangeRates::populateRatesMap(const QString &ratesPath) {
 
     m_ratesMap.insert(currency, datesRatesMap);
   }
-//    qDebug () << ratesPath << m_ratesMap;
+    qDebug () << ratesPath << m_ratesMap.keys();
 }
 
 ExchangeRatesMap *ExchangeRates::ratesMap() {
@@ -103,14 +104,20 @@ float ExchangeRates::rate(const QString &currency, const QString &date, RateErro
   error = NO_ERROR;
   float rate = -1;
 
+  qDebug() << currency << date;
   if (!m_ratesMap.contains(currency)) {
     error = RateErrorType::NO_DATA_FOR_CURRENCY;
     return rate;
   }
-  if (!m_ratesMap.contains(currency)) {
+  if (!m_ratesMap.value(currency).contains(currency)) {
     error = RateErrorType::NO_DATA_FOR_DATE;
-    return rate;
+    qDebug() << m_ratesMap.value(currency).values();
+    if (m_ratesMap.value(currency).values().count())
+      return m_ratesMap.value(currency).values().last();
+    else
+      return rate;
   }
+  qDebug() << m_ratesMap.value(currency).value(date);
 
   return m_ratesMap.value(currency).value(date);
 }

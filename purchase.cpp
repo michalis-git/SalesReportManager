@@ -1,7 +1,9 @@
 #include "purchase.h"
 #include "exchangerates.h"
+#include "appsettings.h"
 #include <QString>
 #include <QDebug>
+#include <QDir>
 
 const QDate &Purchase::date() const {
     return m_date;
@@ -14,6 +16,7 @@ Purchase::Purchase(const QDate &date, const QStringList &valueList) {
         Property::PropertyName propName = Property::PropertyName(i);
         m_properties << Property(propName, value);
     }
+    setDeveloperProceedsInEuros();
 }
 
 const QList<Property> &Purchase::properties() const {
@@ -30,14 +33,17 @@ Property Purchase::propertyByName(Property::PropertyName propertyName) {
     return Property{};
 }
 
-float Purchase::developerProceedsInEuros() {
+void Purchase::setDeveloperProceedsInEuros() {
     float devProceeds = propertyByName(Property::DEVELOPER_PROCEEDS).value().toFloat();
-    QString customerCurrency = propertyByName(Property::CUSTOMER_CURRENCY).stringValue();
+    QString customerCurrency = propertyByName(Property::COUNTRY_CODE).stringValue();
 
     ExchangeRates::RateErrorType error;
+    QString ratesPath = AppSettings::instance()->ratesDirPath() + QDir::separator() + "toEUR";
+    ExchangeRates::instance()->initialize(ratesPath, "toEUR");
     float rate = ExchangeRates::instance()->rate(customerCurrency,
                                                  m_date.toString("yyyy-MM-dd"),
                                                  error);
+//    qDebug() << rate << "**";
     switch (error) {
     case ExchangeRates::NO_DATA_FOR_CURRENCY:
         qDebug() << "Error! no rates for " << customerCurrency << "!";

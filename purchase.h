@@ -15,7 +15,7 @@ public:
     Purchase(const QDate &date, const QStringList &valueList);
     const QList<Property> &properties() const;
     Property propertyByName(Property::PropertyName propertyName);
-    float developerProceedsInEuros();
+    void setDeveloperProceedsInEuros();
     const QDate &date() const;
 };
 
