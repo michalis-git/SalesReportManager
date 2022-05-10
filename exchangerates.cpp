@@ -109,7 +109,7 @@ float ExchangeRates::rate(const QString &currency, const QString &date, RateErro
     error = RateErrorType::NO_DATA_FOR_CURRENCY;
     return rate;
   }
-  if (!m_ratesMap.value(currency).contains(currency)) {
+  if (!m_ratesMap.value(currency).contains(date)) {
     error = RateErrorType::NO_DATA_FOR_DATE;
     qDebug() << m_ratesMap.value(currency).values();
     if (m_ratesMap.value(currency).values().count())
@@ -117,7 +117,7 @@ float ExchangeRates::rate(const QString &currency, const QString &date, RateErro
     else
       return rate;
   }
-  qDebug() << m_ratesMap.value(currency).value(date);
+  qDebug() << "CUR: " << m_ratesMap.value(currency).value(date);
 
   return m_ratesMap.value(currency).value(date);
 }

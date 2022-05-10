@@ -12,9 +12,11 @@ PreferecesDialog::PreferecesDialog(QWidget *parent) :
     AppSettings *appSettings = AppSettings::instance();
     ui->reportsLineEdit->setText(appSettings->reportsDirPath());
     ui->ratesLineEdit->setText(appSettings->ratesDirPath());
+    ui->applePercentageSpinBox->setValue(appSettings->applePercentage());
 
     connect(ui->reportsBrowseBtn, &QPushButton::clicked, this, &PreferecesDialog::onBrowseReportsClicked);
     connect(ui->ratesBrowseBtn, &QPushButton::clicked, this, &PreferecesDialog::onBrowseRatesClicked);
+    connect(ui->applePercentageSpinBox, &QDoubleSpinBox::valueChanged, this, &PreferecesDialog::onAppleValueChanged);
 }
 
 PreferecesDialog::~PreferecesDialog() {
@@ -53,4 +55,8 @@ void PreferecesDialog::onBrowseRatesClicked() {
         path = fileDialog.selectedFiles().first();
         ui->ratesLineEdit->setText(path);
     }
+}
+
+void PreferecesDialog::onAppleValueChanged(double percentage) {
+    AppSettings::instance()->changeApplePercentage(percentage);
 }

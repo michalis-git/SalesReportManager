@@ -13,6 +13,7 @@
 AppSettings::AppSettings() {
 }
 
+
 AppSettings *AppSettings::instance() {
     static AppSettings *appSettings = new AppSettings;
     return appSettings;
@@ -37,6 +38,8 @@ bool AppSettings::initialize(int &error) {
     if (!QDir(m_reportsDirPath).exists())
         error = REPORTS_DIR_NOT_EXIST;
 
+    m_applePercentage = settings.value("applePercentage", 30).toDouble();
+
 }
 
 const QString &AppSettings::reportsDirPath() const {
@@ -45,4 +48,13 @@ const QString &AppSettings::reportsDirPath() const {
 
 const QString &AppSettings::ratesDirPath() const {
     return m_ratesDirPath;
+}
+
+double AppSettings::applePercentage() const {
+    return m_applePercentage;
+}
+
+void AppSettings::changeApplePercentage(const double &percentage) {
+    QSettings settings("SMT");
+    settings.setValue("applePercentage", percentage);
 }

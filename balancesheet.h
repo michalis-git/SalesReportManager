@@ -17,7 +17,7 @@ class BalanceSheet
     QStandardItemModel *m_model;
     void setHeadersToModel();
     void appendLineToModel(const QString &vHeader, const QString &title,
-                           const int &numberOfItems, const float &valueInCurrency, const QString &currency, const float &valueInBaseCurrency) const;
+                           const int &numberOfItems, const float &valueInCurrency, const QString &currency, const float &valueInBaseCurrency, double applePercentage, const float &appleRevenue, double companyPercentage, const float &companyRevenue) const;
     void styleItem(int row, const QString &header, QStandardItem *item) const;
 public:
     BalanceSheet(const Purchases &purchases);

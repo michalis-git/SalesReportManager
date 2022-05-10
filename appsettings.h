@@ -11,6 +11,7 @@ class AppSettings
 
     QString m_ratesDirPath;
     QString m_reportsDirPath;
+    double m_applePercentage;
 public:
     enum  ErrorType {
       NO_ERROR,
@@ -22,6 +23,8 @@ public:
     bool initialize(int &error);
     const QString &ratesDirPath() const;
     const QString &reportsDirPath() const;
+    double applePercentage() const;
+    void changeApplePercentage(const double &percentage);
 };
 
 #endif // APPSETTINGS_H

@@ -1,3 +1,4 @@
+#include "appsettings.h"
 #include "balancesheet.h"
 
 #include <QStandardItem>
@@ -30,6 +31,8 @@ QStandardItemModel *BalanceSheet::getModel() const {
   int numberOfItems = 0, totalItemsPerProduct = 0, totalItems = 0;
   float valueOfItems = 0, totalValuePerProduct = 0, totalValue = 0;
   QString currency;
+  double applePercentage = AppSettings::instance()->applePercentage();
+  double companyPercentage = 100 - applePercentage;
   for (auto title : m_map.keys()) {
     auto purchasesList = m_map.value(title);
     numberOfItems = 0;
@@ -48,14 +51,20 @@ QStandardItemModel *BalanceSheet::getModel() const {
       valueOfItems  += devProceeds;
       totalValuePerProduct += devProceedsInEuro;
       totalValue += devProceedsInEuro;
-      appendLineToModel(QString::number(counter), title, numberOfItems, devProceeds, currency, devProceedsInEuro);
+      appendLineToModel(QString::number(counter), title, numberOfItems, devProceeds, currency, devProceedsInEuro,
+                        applePercentage, (applePercentage / 100) * devProceedsInEuro,
+                        companyPercentage, (companyPercentage / 100) * devProceedsInEuro);
       counter++;
     }
-    appendLineToModel("Subtotal", title, totalItemsPerProduct, 0,  "", totalValuePerProduct);
+    appendLineToModel("Subtotal", title, totalItemsPerProduct, 0,  "", totalValuePerProduct,
+                      applePercentage, (applePercentage / 100) * totalValuePerProduct,
+                      companyPercentage, (companyPercentage / 100) * totalValuePerProduct);
     totalItemsPerProduct = 0;
     totalValuePerProduct = 0;
   }
-  appendLineToModel("Total", "", totalItems, 0, "", totalValue);
+  appendLineToModel("Total", "", totalItems, 0, "", totalValue,
+                    applePercentage, (applePercentage / 100) * totalValue,
+                    companyPercentage, (companyPercentage / 100) * totalValue);
   return m_model;
 }
 
@@ -79,7 +88,7 @@ void BalanceSheet::setHeadersToModel() {
   QStringList headers;
   headers << "Product" << "Items" << "Revenue"
           << "Currency" << "Revenue €"
-          << "Apple Revenue %" << "Apple Revenue %"
+          << "Apple %" << "Apple Revenue %"
           << "SoftwareHouse %" << "SoftwareHouse Revenue";
 
   int i = 0;
@@ -111,10 +120,14 @@ void BalanceSheet::styleItem(int row, const QString &header, QStandardItem *item
 
 void BalanceSheet::appendLineToModel(const QString &vHeader, const QString &title,
                                      const int &numberOfItems, const float &valueInCurrency,
-                                     const QString &currency, const float &valueInBaseCurrency) const {
+                                     const QString &currency, const float &valueInBaseCurrency,
+                                     double applePercentage, const float &appleRevenue,
+                                     double companyPercentage, const float &companyRevenue) const {
   QStringList fields;
   fields << title << QString::number(numberOfItems) << QString::number((valueInCurrency))
-         << currency << QString::number((valueInBaseCurrency));
+         << currency << QString::number((valueInBaseCurrency))
+         << QString::number(applePercentage) << QString::number(appleRevenue)
+         << QString::number(companyPercentage) << QString::number(companyRevenue);
   int j = 0;
   int row = m_model->rowCount();
   for (auto &field : fields) {
@@ -125,7 +138,6 @@ void BalanceSheet::appendLineToModel(const QString &vHeader, const QString &titl
   }
 
   QStandardItem *headerItem = new QStandardItem(vHeader);
-  //    headerItem->setBackground(QBrush("#daedf4"));
   styleItem(row, vHeader, headerItem);
   m_model->setVerticalHeaderItem(row, headerItem);
 

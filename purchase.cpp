@@ -35,7 +35,7 @@ Property Purchase::propertyByName(Property::PropertyName propertyName) {
 
 void Purchase::setDeveloperProceedsInEuros() {
     float devProceeds = propertyByName(Property::DEVELOPER_PROCEEDS).value().toFloat();
-    QString customerCurrency = propertyByName(Property::COUNTRY_CODE).stringValue();
+    QString customerCurrency = propertyByName(Property::CUSTOMER_CURRENCY).stringValue();
 
     ExchangeRates::RateErrorType error;
     QString ratesPath = AppSettings::instance()->ratesDirPath() + QDir::separator() + "toEUR";
@@ -43,7 +43,6 @@ void Purchase::setDeveloperProceedsInEuros() {
     float rate = ExchangeRates::instance()->rate(customerCurrency,
                                                  m_date.toString("yyyy-MM-dd"),
                                                  error);
-//    qDebug() << rate << "**";
     switch (error) {
     case ExchangeRates::NO_DATA_FOR_CURRENCY:
         qDebug() << "Error! no rates for " << customerCurrency << "!";
@@ -55,5 +54,7 @@ void Purchase::setDeveloperProceedsInEuros() {
     default:
         break;
     }
-    m_properties << Property(Property::DEVELOPER_PROCEEDS_EUROS, QString::number(rate * devProceeds));
+
+    m_properties << Property(Property::DEVELOPER_PROCEEDS_EUROS,
+                             QString::number(rate * devProceeds));
 }

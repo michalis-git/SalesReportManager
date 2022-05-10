@@ -41,7 +41,6 @@ QStandardItemModel *ProductsByCountry::getModel() const {
     int numberOfItems = 0, totalItemsPerProduct = 0, totalItems = 0;
     float valueOfItems = 0, totalValueperProduct = 0, totalValue = 0;
     for (auto title : m_map.keys()) {
-        qDebug() << m_map.keys();
         auto countryPurchasesMap = m_map.value(title);
         numberOfItems = 0;
         valueOfItems = 0;

@@ -66,7 +66,6 @@ public:
         PRODUCT_TYPE_ID,     // "Product Type Identifier"
         UNITS,
         DEVELOPER_PROCEEDS,
-        DEVELOPER_PROCEEDS_EUROS,
         BEGIN_DATE,
         END_DATE,
         CUSTOMER_CURRENCY,
@@ -80,6 +79,7 @@ public:
         PERIOD,
         CATEGORY,
         CMB,
+        DEVELOPER_PROCEEDS_EUROS,
 
         //Design by country
         NUMBER_OF_ITEMS,
