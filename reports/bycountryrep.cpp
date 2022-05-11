@@ -12,7 +12,7 @@ void ByCountryRep::synthesizeFirstPartOfText()
 {
     mHtmlText0 = "<html><head><title>HTML Online Editor Sample</title></head><body><h1>";
     mHtmlText0.append("<u><span style=\"font-size:16px;\">By Country Report</span></u></h1><p>");
-    mHtmlText0.append("<span style=\"font-size:12px;\">This report presents the purchases of each design by country. The purchases are being summed by design. The date format is dd/mm/yyyy.</span></p><p>");
+    mHtmlText0.append("<span style=\"font-size:12px;\">This report presents the purchases of each product by country. The purchases are being summed by design. The date format is dd/mm/yyyy.</span></p><p>");
     mHtmlText0.append("<span style=\"font-size:12px;\"><u>Author(s):</u> " + allAuthors + "</span></p><p>");
     mHtmlText0.append("<span style=\"font-size:12px;\"><u>Time Period:</u> from " + fromDate + ", to " + toDate + "</span></p><p>");
     mHtmlText0.append("<span style=\"font-size:12px;\"><u>Comments:</u> <span style=\"color:#ff0000;\">" + comments + "</span></p><hr />");

@@ -81,7 +81,7 @@ public:
         CMB,
         DEVELOPER_PROCEEDS_EUROS,
 
-        //Design by country
+        //Product by country
         NUMBER_OF_ITEMS,
         VALUE_OF_ITEMS_IN_CURRENCY,
         COMPANY_REVENUE,

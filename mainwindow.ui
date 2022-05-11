@@ -230,7 +230,7 @@
                </item>
                <item>
                 <property name="text">
-                 <string>Design by Country</string>
+                 <string>Product by Country</string>
                 </property>
                </item>
               </widget>
@@ -444,7 +444,7 @@
      <x>0</x>
      <y>0</y>
      <width>1329</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

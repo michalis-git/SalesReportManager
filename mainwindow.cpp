@@ -186,7 +186,7 @@ void MainWindow::onDoneClicked() {
         balanceSheet();
     } else if (ui->comboBox->currentText() == "Subsidiary Ledger") {
         populateSubsidiaryLedgerRep(fromDate, toDate, message, saleItemPerAuthorMap);
-    } else if (ui->comboBox->currentText() == "Design by Country") {
+    } else if (ui->comboBox->currentText() == "Product by Country") {
         qDebug() << "!";
 //        populateByCountryRep(fromDate, toDate, message, saleItemPerAuthorMap);
         byCountryModel();
