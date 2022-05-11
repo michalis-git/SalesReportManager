@@ -37,11 +37,11 @@ QStandardItemModel *BalanceSheet::getModel() const {
   QString currency;
   double applePercentage = AppSettings::instance()->applePercentage();
   double companyPercentage = 100 - applePercentage;
-  for (auto title : m_map.keys()) {
+  for (auto &title : m_map.keys()) {
     auto purchasesList = m_map.value(title);
     numberOfItems = 0;
     int counter  = 1;
-    for (auto purchase : purchasesList) {
+    for (auto &purchase : purchasesList) {
       numberOfItems = 0;
       int units = purchase.propertyByName(Property::UNITS).value().toInt();
       currency = purchase.propertyByName(Property::CUSTOMER_CURRENCY).stringValue();
