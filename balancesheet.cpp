@@ -5,12 +5,12 @@
 #include <QDebug>
 
 
-BalanceSheet::BalanceSheet(const Purchases &purchases) {
+BalanceSheet::BalanceSheet(const Purchases &purchases)
+    : FinancialReport(purchases) {
   m_title = QObject::tr("Balance Sheet Report");
   m_description = QObject::tr("This report presents the purchases of every design in each currency that the design has been purchased. ");
   m_description.append("The purchases are being summed for every design and at the end of the report. The date format is dd/mm/yyyy.");
-  m_startDate = purchases.startDate();
-  m_endDate = purchases.endDate();
+
   QList<Purchase> purchasesList = purchases.purchaseList();
   for (auto &purchase : purchasesList) {
     QString title = purchase.propertyByName(Property::TITLE).stringValue();
@@ -23,24 +23,26 @@ BalanceSheet::BalanceSheet(const Purchases &purchases) {
     }
   }
 
-  m_model = new QStandardItemModel;
-  setHeadersToModel();
+  QStringList headers;
+  headers << "Product" << "Items" << "Revenue"
+          << "Currency" << "Revenue €"
+          << "Apple %" << "Apple €"
+          << "SoftwareHouse %" << "SoftwareHouse €";
+  setHeadersToModel(headers);
 }
 
 QStandardItemModel *BalanceSheet::getModel() const {
   int numberOfItems = 0, totalItemsPerProduct = 0, totalItems = 0;
-  float valueOfItems = 0, totalValuePerProduct = 0, totalValue = 0;
+  float totalValuePerProduct = 0, totalValue = 0;
   QString currency;
   double applePercentage = AppSettings::instance()->applePercentage();
   double companyPercentage = 100 - applePercentage;
   for (auto title : m_map.keys()) {
     auto purchasesList = m_map.value(title);
     numberOfItems = 0;
-    valueOfItems = 0;
     int counter  = 1;
     for (auto purchase : purchasesList) {
       numberOfItems = 0;
-      valueOfItems = 0;
       int units = purchase.propertyByName(Property::UNITS).value().toInt();
       currency = purchase.propertyByName(Property::CUSTOMER_CURRENCY).stringValue();
       numberOfItems += units;
@@ -48,7 +50,6 @@ QStandardItemModel *BalanceSheet::getModel() const {
       totalItems += units;
       float devProceeds = purchase.propertyByName(Property::DEVELOPER_PROCEEDS).value().toFloat();
       float devProceedsInEuro = purchase.propertyByName(Property::DEVELOPER_PROCEEDS_EUROS).value().toFloat();
-      valueOfItems  += devProceeds;
       totalValuePerProduct += devProceedsInEuro;
       totalValue += devProceedsInEuro;
       appendLineToModel(QString::number(counter), title, numberOfItems, devProceeds, currency, devProceedsInEuro,
@@ -66,56 +67,6 @@ QStandardItemModel *BalanceSheet::getModel() const {
                     applePercentage, (applePercentage / 100) * totalValue,
                     companyPercentage, (companyPercentage / 100) * totalValue);
   return m_model;
-}
-
-const QString &BalanceSheet::title() const {
-  return m_title;
-}
-
-const QString &BalanceSheet::description() const {
-  return m_description;
-}
-
-const QDate &BalanceSheet::startDate() const {
-  return m_startDate;
-}
-
-const QDate &BalanceSheet::endDate() const {
-  return m_endDate;
-}
-
-void BalanceSheet::setHeadersToModel() {
-  QStringList headers;
-  headers << "Product" << "Items" << "Revenue"
-          << "Currency" << "Revenue €"
-          << "Apple %" << "Apple €"
-          << "SoftwareHouse %" << "SoftwareHouse €";
-
-  int i = 0;
-  for (auto header : headers) {
-    QStandardItem *headerItem = new QStandardItem(header);
-    m_model->setHorizontalHeaderItem(i, headerItem);
-    i++;
-  }
-
-}
-
-void BalanceSheet::styleItem(const QString &header, QStandardItem *item) const {
-  if (header == "Total") {
-    QFont  font = item->font();
-    font.setBold(true);
-    item->setFont(font);
-    item->setBackground(QBrush(QColor("#80c3d8")));
-  }
-  if (header == "Subtotal") {
-    QFont  font = item->font();
-    font.setBold(true);
-    item->setFont(font);
-    item->setBackground(QBrush(QColor("#daedf4")));
-    //        m_model->setHeaderData(row, Qt::Orientation::Vertical,
-    //                               QVariant(QBrush(QColor("#daedf4"))),
-    //                               Qt::BackgroundColorRole);
-  }
 }
 
 void BalanceSheet::appendLineToModel(const QString &vHeader, const QString &title,
@@ -140,5 +91,4 @@ void BalanceSheet::appendLineToModel(const QString &vHeader, const QString &titl
   QStandardItem *headerItem = new QStandardItem(vHeader);
   styleItem(vHeader, headerItem);
   m_model->setVerticalHeaderItem(row, headerItem);
-
 }

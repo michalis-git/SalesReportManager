@@ -22,6 +22,7 @@ SOURCES += main.cpp\
   balancesheet.cpp \
   decompresser.cpp \
   exchangerates.cpp \
+  financialreport.cpp \
         mainwindow.cpp \
     dailyreport.cpp \
     appcontroller.cpp \
@@ -47,6 +48,7 @@ HEADERS  += mainwindow.h \
     currency.h \
     decompresser.h \
     exchangerates.h \
+    financialreport.h \
     preferencesdialog.h \
     productsbycountry.h \
     property.h \
