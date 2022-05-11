@@ -31,8 +31,6 @@ public:
 
     QList <QDate> readFilesFromDirectory(MainWindow *mainwindow, QString path);
 
-//    QList <SaleItem*> onBalanceSheetSelected(MainWindow* mainwindow, QDate sinceDate, QDate untilDate, QString *missingDatesMessage);
-//    void populateSaleItemsPerAuthorMap(QMap <QString, QList <SaleItem*>* > *saleItemsPerAuthorList, MainWindow* mainwindow, QDate sinceDate, QDate untilDate, QStringList authorsSelectedList, QString *missingDatesMessage);
     void onSubsidiarySheetSelected(QMap <QString, QList <SaleItem*>* > *saleItemsPerAuthorList, MainWindow* mainwindow, QDate sinceDate, QDate untilDate, QStringList authorsSelectedList, QString *missingDatesMessage);
 
     QStringList browseSourceDir();
@@ -50,8 +48,6 @@ public:
     QString dailyReportsDirPath();
 
 private:
-//    void populateAllSaleItemList(QList <SaleItem*>* allSaleItemList, QDate *date);
-    void populateAllSaleItemList(QMap<QString, QList<SaleItem *> *> *saleItemsPerAuthorMap, QDate *date, MainWindow *mainwindow);
 //    void createExchangeRateFiles(QList <QDate> dateOfReportList, MainWindow *mainwindow);
     void createAdditionalDateList(QDate startDate, QDate endDate, MainWindow *mainwindow);
     void getFirstLastDatesFromRateFile(QDate& firstDateOfRates, QDate& lastDateOfRates, QStringList fullPathList, MainWindow *mainwindow);

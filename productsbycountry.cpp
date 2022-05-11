@@ -6,9 +6,9 @@
 
 ProductsByCountry::ProductsByCountry(const Purchases &purchases)
     : FinancialReport(purchases) {
-    m_title = QObject::tr("Subsidiary Ledger Report");
-    m_description = QObject::tr("This report presents all the purchases of the selected time period.");
-    m_description.append("The purchases are being sorted and summed by date. The date format is dd/mm/yyyy.");
+    m_title = QObject::tr("Products by Country Report");
+    m_description = QObject::tr("This report presents the purchases of each product by country. ");
+    m_description.append("The purchases are being summed by design. The date format is dd/mm/yyyy.");
 
     QList<Purchase> purchasesList = purchases.purchaseList();
     for (auto &purchase : purchasesList) {

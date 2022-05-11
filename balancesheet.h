@@ -2,13 +2,11 @@
 #define BALANCESHEET_H
 
 #include "financialreport.h"
-#include <purchases.h>
 
 class QStandardItemModel;
 class QStandardItem;
 
 
-typedef QList<Purchase> PurchasesList;
 class BalanceSheet : public FinancialReport
 {
     QMap<QString, PurchasesList> m_map;

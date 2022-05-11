@@ -41,12 +41,6 @@ private:
 
     void findMissingDates(QStringList list);
 
-
-    void populateReportSheet(QDate fromDate, QDate toDate, QString message, QMap <QString, QList<SaleItem*>* >);
-    void populateSubsidiaryLedgerRep(QDate fromDate, QDate toDate, QString message, QMap <QString, QList<SaleItem*>* >);
-    QStandardItemModel *byCountryModel();
-    QStandardItemModel *balanceSheet();
-
     QStringList populateAuthorsSelectedList();
     void upDateCalendars(QList<QDate> dateOfReportList);
     void clearCalendars();

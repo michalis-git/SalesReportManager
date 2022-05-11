@@ -1,4 +1,3 @@
-#include "appsettings.h"
 #include "balancesheet.h"
 
 #include <QStandardItem>
@@ -35,8 +34,6 @@ QStandardItemModel *BalanceSheet::getModel() const {
   int numberOfItems = 0, totalItemsPerProduct = 0, totalItems = 0;
   float totalValuePerProduct = 0, totalValue = 0;
   QString currency;
-  double applePercentage = AppSettings::instance()->applePercentage();
-  double companyPercentage = 100 - applePercentage;
   for (auto &title : m_map.keys()) {
     auto purchasesList = m_map.value(title);
     numberOfItems = 0;
@@ -53,19 +50,19 @@ QStandardItemModel *BalanceSheet::getModel() const {
       totalValuePerProduct += devProceedsInEuro;
       totalValue += devProceedsInEuro;
       appendLineToModel(QString::number(counter), title, numberOfItems, devProceeds, currency, devProceedsInEuro,
-                        applePercentage, (applePercentage / 100) * devProceedsInEuro,
-                        companyPercentage, (companyPercentage / 100) * devProceedsInEuro);
+                        m_applePercentage, (m_applePercentage / 100) * devProceedsInEuro,
+                        m_companyPercentage, (m_companyPercentage / 100) * devProceedsInEuro);
       counter++;
     }
     appendLineToModel("Subtotal", title, totalItemsPerProduct, 0,  "", totalValuePerProduct,
-                      applePercentage, (applePercentage / 100) * totalValuePerProduct,
-                      companyPercentage, (companyPercentage / 100) * totalValuePerProduct);
+                      m_applePercentage, (m_applePercentage / 100) * totalValuePerProduct,
+                      m_companyPercentage, (m_companyPercentage / 100) * totalValuePerProduct);
     totalItemsPerProduct = 0;
     totalValuePerProduct = 0;
   }
   appendLineToModel("Total", "", totalItems, 0, "", totalValue,
-                    applePercentage, (applePercentage / 100) * totalValue,
-                    companyPercentage, (companyPercentage / 100) * totalValue);
+                    m_applePercentage, (m_applePercentage / 100) * totalValue,
+                    m_companyPercentage, (m_companyPercentage / 100) * totalValue);
   return m_model;
 }
 

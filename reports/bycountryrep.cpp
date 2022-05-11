@@ -1,15 +1,12 @@
 #include "bycountryrep.h"
 
-ByCountryRep::ByCountryRep()
-{
+ByCountryRep::ByCountryRep() {
 }
 
-ByCountryRep::~ByCountryRep()
-{
+ByCountryRep::~ByCountryRep() {
 }
 
-void ByCountryRep::synthesizeFirstPartOfText()
-{
+void ByCountryRep::synthesizeFirstPartOfText() {
     mHtmlText0 = "<html><head><title>HTML Online Editor Sample</title></head><body><h1>";
     mHtmlText0.append("<u><span style=\"font-size:16px;\">By Country Report</span></u></h1><p>");
     mHtmlText0.append("<span style=\"font-size:12px;\">This report presents the purchases of each product by country. The purchases are being summed by design. The date format is dd/mm/yyyy.</span></p><p>");
@@ -18,8 +15,7 @@ void ByCountryRep::synthesizeFirstPartOfText()
     mHtmlText0.append("<span style=\"font-size:12px;\"><u>Comments:</u> <span style=\"color:#ff0000;\">" + comments + "</span></p><hr />");
 }
 
-void ByCountryRep::synthesizeSecondPartOfText()
-{
+void ByCountryRep::synthesizeSecondPartOfText() {
     mHtmlText1.append("<table align=\"left\" border=\"1\" cellpadding=\"1\" cellspacing=\"0\">");
 
     mHtmlText1.append("<thead><tbody><tr>");
@@ -39,8 +35,7 @@ void ByCountryRep::synthesizeSecondPartOfText()
     mHtmlText2 = "<table align=\"left\" border=\"1\" cellpadding=\"1\" cellspacing=\"0\" style=\"width: 500px;\">";
 }
 
-void ByCountryRep::appendLineinTable(QString name, QString country, int numberOfItems, float eurosOfItems, float wingsPercentage)
-{
+void ByCountryRep::appendLineinTable(QString name, QString country, int numberOfItems, float eurosOfItems, float wingsPercentage) {
     mHtmlText2.append("<tr><td width = 100><span style=\"font-size:12px;\">" + author + "</span></td>");
     mHtmlText2.append("<td width = 200><span style=\"font-size:12px;\">" + name + "</span></td>");
     mHtmlText2.append("<td width = 60><span style=\"font-size:12px;\">" + country + "</span></td>");
@@ -54,8 +49,7 @@ void ByCountryRep::appendLineinTable(QString name, QString country, int numberOf
     mHtmlText2.append("<td width  = 120><span style=\"font-size:12px;\">" + QString::number(eurosOfItems * (0.7 - wingsPercentage), 'f', 2) + "</span></td>");
 }
 
-void ByCountryRep::appendTotalPerDesignInTable(QString name, int numberOfItems, float eurosOfItems, float wingsPercentage)
-{
+void ByCountryRep::appendTotalPerDesignInTable(QString name, int numberOfItems, float eurosOfItems, float wingsPercentage) {
     QString str1 = "<td style=\"background-color: #CCFFFF; \"width = ";
     QString str2 = " <span style=\"text-align: left; font-size:12px;\"><strong>";
     mHtmlText2.append("<tr>" + str1 + "100" + str2 + author + "</strong></span></td>");
@@ -71,8 +65,7 @@ void ByCountryRep::appendTotalPerDesignInTable(QString name, int numberOfItems, 
     mHtmlText2.append(str1 + "120" + str2 + QString::number(eurosOfItems * (0.7 - wingsPercentage), 'f', 2) + "</strong></span></td>");
 }
 
-void ByCountryRep::appendTotalOfReportInTable(int numberOfItems, float eurosOfItemsTotal, float wingsRevenueTotal, float designerRevenueTotal)
-{
+void ByCountryRep::appendTotalOfReportInTable(int numberOfItems, float eurosOfItemsTotal, float wingsRevenueTotal, float designerRevenueTotal) {
     mHtmlText2.append("<tr><td width = 100 style=\"background-color: rgb(153, 153, 153);\"><span style=\"font-size:14px;\"><u><strong>Total:</strong></u></span></td>");
     mHtmlText2.append("<td width = 200 style=\"background-color: rgb(153, 153, 153);\">  </td>");
     mHtmlText2.append("<td width = 60 style=\"background-color: rgb(153, 153, 153);\"><strong><span style=\"font-size:14px;\">  </span></strong></td>");

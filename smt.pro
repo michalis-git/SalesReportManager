@@ -36,7 +36,8 @@ SOURCES += main.cpp\
     saleitem.cpp \
     reports/subsidiaryledgerrep.cpp \
     reports/bycountryrep.cpp \
-    reports/balancesheetrep.cpp
+    reports/balancesheetrep.cpp \
+  subsidiaryledgerreport.cpp
 
 
 
@@ -59,7 +60,8 @@ HEADERS  += mainwindow.h \
     reports/subsidiaryledgerrep.h \
     reports/bycountryrep.h \
     reports/balancesheetrep.h \
-    subsidiaryledger
+    subsidiaryledger \
+    subsidiaryledgerreport.h
 
 
 FORMS    += mainwindow.ui \
