@@ -93,7 +93,7 @@ void ExchangeRates::populateRatesMap(const QString &ratesPath) {
 
     m_ratesMap.insert(currency, datesRatesMap);
   }
-    qDebug () << ratesPath << m_ratesMap.keys();
+//    qDebug () << ratesPath << m_ratesMap.keys();
 }
 
 ExchangeRatesMap *ExchangeRates::ratesMap() {

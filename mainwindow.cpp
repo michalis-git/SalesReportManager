@@ -16,7 +16,7 @@
 #include "QDebug"
 #include "QByteArray"
 #include "QFileDialog"
-#include "preferecesdialog.h"
+#include "preferencesdialog.h"
 #include "appsettings.h"
 #include "purchases.h"
 
@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     mAppController = new AppController(this);
 
-    this->showMaximized();
+//    this->showMaximized();
 
     connect(ui->calendarWidget, SIGNAL(clicked(QDate)), this, SLOT(onDateClicked(QDate)));
     connect(ui->doneButton, SIGNAL(clicked()), this, SLOT(onDoneClicked()));
@@ -100,7 +100,7 @@ void MainWindow::onListWidgetItemClicked(QListWidgetItem* item) {
 }
 
 void MainWindow::onActionPreferencesTriggered() {
-    PreferecesDialog dialog(this);
+    PreferencesDialog dialog(this);
     dialog.exec();
 }
 

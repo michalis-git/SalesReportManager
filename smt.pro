@@ -13,7 +13,7 @@ QT       += printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = unpack
+TARGET = Smt
 TEMPLATE = app
 
 
@@ -27,7 +27,7 @@ SOURCES += main.cpp\
     appcontroller.cpp \
     httprequest.cpp \
     currency.cpp \
-  preferecesdialog.cpp \
+  preferencesdialog.cpp \
   productsbycountry.cpp \
   property.cpp \
   purchase.cpp \
@@ -47,7 +47,7 @@ HEADERS  += mainwindow.h \
     currency.h \
     decompresser.h \
     exchangerates.h \
-    preferecesdialog.h \
+    preferencesdialog.h \
     productsbycountry.h \
     property.h \
     purchase.h \
@@ -56,18 +56,15 @@ HEADERS  += mainwindow.h \
     httprequest.h \
     reports/subsidiaryledgerrep.h \
     reports/bycountryrep.h \
-    reports/balancesheetrep.h
+    reports/balancesheetrep.h \
+    subsidiaryledger
 
 
 FORMS    += mainwindow.ui \
-  preferecesdialog.ui
+  preferencesdialog.ui
 
 INCLUDEPATH += $$[QT_INSTALL_HEADERS]/QtZlib
 LIBS += -L/usr/local/opt/zlib/lib -lz
-#INCLUDEPATH += C:\Qt\Qt5.0.2\5.0.2\mingw47_32\include\QtZlib
-#INCLUDEPATH += C:\Qt\Qt5.1.1VS\5.1.1\msvc2012\include\QtZlib
-#INCLUDEPATH += C:\Qt\Qt5.1.1VS\5.1.1\msvc2012\lib
-#LIBS += -lz
 
 RESOURCES += \
     resources.qrc

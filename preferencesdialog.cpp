@@ -1,12 +1,12 @@
-#include "preferecesdialog.h"
+#include "preferencesdialog.h"
 #include "appsettings.h"
-#include "ui_preferecesdialog.h"
+#include "ui_preferencesdialog.h"
 
 #include <QFileDialog>
 
-PreferecesDialog::PreferecesDialog(QWidget *parent) :
+PreferencesDialog::PreferencesDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::PreferecesDialog) {
+    ui(new Ui::PreferencesDialog) {
     ui->setupUi(this);
 
     AppSettings *appSettings = AppSettings::instance();
@@ -14,16 +14,16 @@ PreferecesDialog::PreferecesDialog(QWidget *parent) :
     ui->ratesLineEdit->setText(appSettings->ratesDirPath());
     ui->applePercentageSpinBox->setValue(appSettings->applePercentage());
 
-    connect(ui->reportsBrowseBtn, &QPushButton::clicked, this, &PreferecesDialog::onBrowseReportsClicked);
-    connect(ui->ratesBrowseBtn, &QPushButton::clicked, this, &PreferecesDialog::onBrowseRatesClicked);
-//    connect(ui->applePercentageSpinBox, &QDoubleSpinBox::valueChanged, this, &PreferecesDialog::onAppleValueChanged);
+    connect(ui->reportsBrowseBtn, &QPushButton::clicked, this, &PreferencesDialog::onBrowseReportsClicked);
+    connect(ui->ratesBrowseBtn, &QPushButton::clicked, this, &PreferencesDialog::onBrowseRatesClicked);
+//    connect(ui->applePercentageSpinBox, &QDoubleSpinBox::valueChanged, this, &PreferencesDialog::onAppleValueChanged);
 }
 
-PreferecesDialog::~PreferecesDialog() {
+PreferencesDialog::~PreferencesDialog() {
     delete ui;
 }
 
-void PreferecesDialog::onBrowseReportsClicked() {
+void PreferencesDialog::onBrowseReportsClicked() {
     QString path = AppSettings::instance()->reportsDirPath();
     if (!QDir(path).exists())
         path = QDir::homePath();
@@ -40,7 +40,7 @@ void PreferecesDialog::onBrowseReportsClicked() {
     }
 }
 
-void PreferecesDialog::onBrowseRatesClicked() {
+void PreferencesDialog::onBrowseRatesClicked() {
     QString path = AppSettings::instance()->ratesDirPath();
     if (!QDir(path).exists())
         path = QDir::homePath();
@@ -57,6 +57,6 @@ void PreferecesDialog::onBrowseRatesClicked() {
     }
 }
 
-void PreferecesDialog::onAppleValueChanged(double percentage) {
+void PreferencesDialog::onAppleValueChanged(double percentage) {
     AppSettings::instance()->changeApplePercentage(percentage);
 }
