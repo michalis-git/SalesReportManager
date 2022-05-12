@@ -54,8 +54,8 @@ private:
     void createRateFiles(QList<QDate> dateOfReportList, MainWindow *mainwindow);
 
 private slots:
-    void requestIsFinished();
-    void artisticRequestIsFinished();
+//    void requestIsFinished();
+//    void artisticRequestIsFinished();
 
 signals:
     void authorsDesignRespReceived(QStringList* list);

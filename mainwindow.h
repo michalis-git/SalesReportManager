@@ -44,6 +44,7 @@ private:
     QStringList populateAuthorsSelectedList();
     void upDateCalendars(QList<QDate> dateOfReportList);
     void clearCalendars();
+    bool exportToXls(const QString &path, const QStandardItemModel &model);
 
 
 

@@ -67,7 +67,7 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
   preferencesdialog.ui
 
-INCLUDEPATH += $$[QT_INSTALL_HEADERS]/QtZlib
+#INCLUDEPATH += $$[QT_INSTALL_HEADERS]/QtZlib
 LIBS += -L/usr/local/opt/zlib/lib -lz
 
 RESOURCES += \

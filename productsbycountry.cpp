@@ -59,23 +59,24 @@ QStandardItemModel *ProductsByCountry::getModel() const {
                 totalItems += units;
                 float devProceeds = purchase.propertyByName(Property::DEVELOPER_PROCEEDS).value().toFloat();
                 valueOfItems  += devProceeds;
-                totalValueperProduct += devProceeds;
-                totalValue += devProceeds;
+                float devProceedsInEuro = purchase.propertyByName(Property::DEVELOPER_PROCEEDS_EUROS).value().toFloat();
+                totalValueperProduct += devProceedsInEuro;
+                totalValue += devProceedsInEuro;
             }
             appendLineToModel(QString::number(counter), title, country, numberOfItems, valueOfItems,
-                              m_applePercentage, (m_applePercentage / 100) * devProceedsInEuro,
-                              m_companyPercentage, (m_companyPercentage / 100) * devProceedsInEuro);
+                              m_applePercentage, (m_applePercentage / 100) * valueOfItems,
+                              m_companyPercentage, (m_companyPercentage / 100) * valueOfItems);
             counter++;
         }
         appendLineToModel("Subtotal", title, "", totalItemsPerProduct, totalValueperProduct,
-                          m_applePercentage, (m_applePercentage / 100) * devProceedsInEuro,
-                          m_companyPercentage, (m_companyPercentage / 100) * devProceedsInEuro);
+                          m_applePercentage, (m_applePercentage / 100) * totalValueperProduct,
+                          m_companyPercentage, (m_companyPercentage / 100) * totalValueperProduct);
         totalItemsPerProduct = 0;
         totalValueperProduct = 0;
     }
     appendLineToModel("Total", "", "", totalItems, totalValue,
-                      m_applePercentage, (m_applePercentage / 100) * devProceedsInEuro,
-                      m_companyPercentage, (m_companyPercentage / 100) * devProceedsInEuro);
+                      m_applePercentage, (m_applePercentage / 100) * totalValue,
+                      m_companyPercentage, (m_companyPercentage / 100) * totalValue);
     return m_model;
 }
 
@@ -84,7 +85,9 @@ void ProductsByCountry::appendLineToModel(const QString &vHeader, const QString 
                                           double applePercentage, const float &appleRevenue,
                                           double companyPercentage, const float &companyRevenue) const {
     QStringList fields;
-    fields << title << country << QString::number(numberOfItems) << QString::number((valueOfItems));
+    fields << title << country << QString::number(numberOfItems) << QString::number(valueOfItems)
+           << QString::number(applePercentage) << QString::number(appleRevenue)
+           << QString::number(companyPercentage) << QString::number(companyRevenue);
     int j = 0;
     int row = m_model->rowCount();
     for (auto &field : fields) {

@@ -1,5 +1,4 @@
 #include "appcontroller.h"
-#include "httprequest.h"
 #include "saleitem.h"
 #include "mainwindow.h"
 #include "purchases.h"
@@ -22,10 +21,6 @@
 
 AppController::AppController(MainWindow* mainwindow) {
     m_mainWindow = mainwindow;
-    request = new HttpRequest(mainwindow, "http://www.wingssystems.com/index.php/rest_server/all_authors_designs/format/json", "");
-    connect(request, SIGNAL(requestIsFinished()), this, SLOT(requestIsFinished()));
-    artisticRequest = new HttpRequest(mainwindow, "http://www.wingssystems.com/Artistic_Snap/index.php/rest_server/all_authors_designs/format/json", "");
-    connect(artisticRequest, SIGNAL(requestIsFinished()), this, SLOT(artisticRequestIsFinished()));
 
     AppSettings *appSettings = AppSettings::instance();
     int errorType;
@@ -43,30 +38,30 @@ AppController::AppController(MainWindow* mainwindow) {
 }
 
 AppController::~AppController() {
-    delete request;
+//    delete request;
 }
 
-void AppController::requestIsFinished() {
-    emit authorsDesignRespReceived(request->authorSingularList);
-}
+//void AppController::requestIsFinished() {
+//    emit authorsDesignRespReceived(request->authorSingularList);
+//}
 
-void AppController::artisticRequestIsFinished() {
-    foreach( QString key, artisticRequest->designsAuthors.keys() ) {
-        request->designsAuthors.insert(key, artisticRequest->designsAuthors.value(key));
-        //qDebug() << key << artisticRequest->designsAuthors.value(key);
-    }
-    foreach( QString key, artisticRequest->designsWingsPercentageMap.keys() ) {
-        request->designsWingsPercentageMap.insert(key, artisticRequest->designsWingsPercentageMap.value(key));
-        //qDebug() << key << artisticRequest->designsWingsPercentageMap.value(key);
-    }
-    //        for (int i = 0; i < artisticRequest->authorSingularList->count(); i++)
-    //        {
-    //            request->authorSingularList.insert(key, artisticRequest->authorSingularList->value(key));
-    //            qDebug() << key << artisticRequest->authorSingularList->value(key);
-    //        }
+//void AppController::artisticRequestIsFinished() {
+//    foreach( QString key, artisticRequest->designsAuthors.keys() ) {
+//        request->designsAuthors.insert(key, artisticRequest->designsAuthors.value(key));
+//        //qDebug() << key << artisticRequest->designsAuthors.value(key);
+//    }
+//    foreach( QString key, artisticRequest->designsWingsPercentageMap.keys() ) {
+//        request->designsWingsPercentageMap.insert(key, artisticRequest->designsWingsPercentageMap.value(key));
+//        //qDebug() << key << artisticRequest->designsWingsPercentageMap.value(key);
+//    }
+//    //        for (int i = 0; i < artisticRequest->authorSingularList->count(); i++)
+//    //        {
+//    //            request->authorSingularList.insert(key, artisticRequest->authorSingularList->value(key));
+//    //            qDebug() << key << artisticRequest->authorSingularList->value(key);
+//    //        }
 
-    emit artisticAuthorsDesignRespReceived(artisticRequest->authorSingularList);
-}
+//    emit artisticAuthorsDesignRespReceived(artisticRequest->authorSingularList);
+//}
 
 QList<QDate> AppController::loadAppleReportFiles(QString path, MainWindow *mainwindow) {
     QStringList nameFilter;
@@ -193,8 +188,8 @@ bool AppController::isDailyReport(QDate date) {
 }
 
 QStringList* AppController::getAuthorList() {
-    qDebug() << request->authorSingularList;
-    return request->authorSingularList;
+//    qDebug() << request->authorSingularList;
+//    return request->authorSingularList;
 }
 
 

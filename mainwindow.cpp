@@ -158,6 +158,31 @@ void MainWindow::clearCalendars() {
     }
 }
 
+bool MainWindow::exportToXls(const QString &path, const QStandardItemModel &model) {
+//    filename,_ = QFileDialog.getSaveFileName(self, 'Save File', '', ".xls(*.xls)")
+
+//    wbk = xlwt.Workbook()
+//    sheet = wbk.add_sheet("sheet", cell_overwrite_ok=True)
+//    style = xlwt.XFStyle()
+//    font = xlwt.Font()
+//    font.bold = True
+//    style.font = font
+//    model = self.tableWidget.model()
+//    for c in range(model.columnCount()):
+//        text = model.headerData(c, QtCore.Qt.Horizontal)
+//        sheet.write(0, c+1, text, style=style)
+
+//    for r in range(model.rowCount()):
+//        text = model.headerData(r, QtCore.Qt.Vertical)
+//        sheet.write(r+1, 0, text, style=style)
+
+//    for c in range(model.columnCount()):
+//        for r in range(model.rowCount()):
+//            text = model.data(model.index(r, c))
+//            sheet.write(r+1, c+1, text)
+//    wbk.save(filename)
+}
+
 void MainWindow::onDoneClicked() {
     this->setDisabled(true);
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -191,7 +216,7 @@ void MainWindow::onDoneClicked() {
     ui->startDateLabel->setText(report->startDate().toString("dd-MM-yyyy"));
     ui->endDateLabel->setText(report->endDate().toString("dd-MM-yyyy"));
 
-
+//    exportToXls()
 
     this->setDisabled(false);
     QApplication::restoreOverrideCursor();

@@ -1,7 +1,7 @@
 #include "decompresser.h"
-#include "qdir.h"
-#include "zlib.h"
 
+#include <zlib.h>
+#include <QDir>
 #include <QDataStream>
 #include <QFile>
 #include <QDebug>

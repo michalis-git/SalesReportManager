@@ -20,7 +20,7 @@ QString dateFromLine(const QString &line) {
 }
 
 float rateFromLine(const QString &line) {
-  return line.rightRef(line.length() - 11).toFloat();
+  return line.right(line.length() - 11).toFloat();
 }
 
 bool ExchangeRates::initialize(const QString &ratesPath, const QString &baseCurrency) {
