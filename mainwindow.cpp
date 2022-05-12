@@ -29,10 +29,13 @@
 #include <QTextEdit>
 #include <QScrollBar>
 #include <QLayoutItem>
+#include <OpenXLSX.hpp>
 
 #include "balancesheet.h"
 #include "productsbycountry.h"
 #include "subsidiaryledgerreport.h"
+
+using namespace OpenXLSX;
 
 bool authorLessThan(const SaleItem* left, const SaleItem* right) {
     if (left->realName == right->realName)
@@ -222,8 +225,14 @@ void MainWindow::onDoneClicked() {
     QApplication::restoreOverrideCursor();
 }
 
-void MainWindow::onExportReportClicked()
-{
+void MainWindow::onExportReportClicked() {
+  XLDocument doc;
+  doc.create("Spreadsheet.xlsx");
+  auto wks = doc.workbook().worksheet("Sheet1");
+
+  wks.cell("A1").value() = "Hello, OpenXLSX!";
+
+  doc.save();
 //    QFileDialog fileDialog(this, "Save file", QDir::currentPath(), ".html");
 //    fileDialog.setAcceptMode(QFileDialog::AcceptSave);
 //    fileDialog.setWindowModality(Qt::ApplicationModal);
