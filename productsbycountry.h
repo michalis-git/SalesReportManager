@@ -16,7 +16,7 @@ class ProductsByCountry :public FinancialReport
     QMap<QString, CountryPurchasesMap> m_map;
 
     void appendLineToModel(const QString &vHeader, const QString &title, const QString &country,
-                           const int &numberOfItems, const float &valueOfItems) const;
+                           const int &numberOfItems, const float &valueOfItems, double applePercentage, const float &appleRevenue, double companyPercentage, const float &companyRevenue) const;
 
 public:
     ProductsByCountry(const Purchases &purchases);

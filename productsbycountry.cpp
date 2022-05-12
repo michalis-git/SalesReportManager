@@ -62,19 +62,27 @@ QStandardItemModel *ProductsByCountry::getModel() const {
                 totalValueperProduct += devProceeds;
                 totalValue += devProceeds;
             }
-            appendLineToModel(QString::number(counter), title, country, numberOfItems, valueOfItems);
+            appendLineToModel(QString::number(counter), title, country, numberOfItems, valueOfItems,
+                              m_applePercentage, (m_applePercentage / 100) * devProceedsInEuro,
+                              m_companyPercentage, (m_companyPercentage / 100) * devProceedsInEuro);
             counter++;
         }
-        appendLineToModel("Subtotal", title, "", totalItemsPerProduct, totalValueperProduct);
+        appendLineToModel("Subtotal", title, "", totalItemsPerProduct, totalValueperProduct,
+                          m_applePercentage, (m_applePercentage / 100) * devProceedsInEuro,
+                          m_companyPercentage, (m_companyPercentage / 100) * devProceedsInEuro);
         totalItemsPerProduct = 0;
         totalValueperProduct = 0;
     }
-    appendLineToModel("Total", "", "", totalItems, totalValue);
+    appendLineToModel("Total", "", "", totalItems, totalValue,
+                      m_applePercentage, (m_applePercentage / 100) * devProceedsInEuro,
+                      m_companyPercentage, (m_companyPercentage / 100) * devProceedsInEuro);
     return m_model;
 }
 
 void ProductsByCountry::appendLineToModel(const QString &vHeader, const QString &title, const QString &country,
-                                          const int &numberOfItems, const float &valueOfItems) const {
+                                          const int &numberOfItems, const float &valueOfItems,
+                                          double applePercentage, const float &appleRevenue,
+                                          double companyPercentage, const float &companyRevenue) const {
     QStringList fields;
     fields << title << country << QString::number(numberOfItems) << QString::number((valueOfItems));
     int j = 0;
