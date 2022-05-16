@@ -34,34 +34,11 @@ AppController::AppController(MainWindow* mainwindow) {
         if (errorType == AppSettings::REPORTS_DIR_NOT_EXIST)
             qDebug() << "Please browse to the Daily Reports directory";
     }
-    getAuthorList();
 }
 
 AppController::~AppController() {
 //    delete request;
 }
-
-//void AppController::requestIsFinished() {
-//    emit authorsDesignRespReceived(request->authorSingularList);
-//}
-
-//void AppController::artisticRequestIsFinished() {
-//    foreach( QString key, artisticRequest->designsAuthors.keys() ) {
-//        request->designsAuthors.insert(key, artisticRequest->designsAuthors.value(key));
-//        //qDebug() << key << artisticRequest->designsAuthors.value(key);
-//    }
-//    foreach( QString key, artisticRequest->designsWingsPercentageMap.keys() ) {
-//        request->designsWingsPercentageMap.insert(key, artisticRequest->designsWingsPercentageMap.value(key));
-//        //qDebug() << key << artisticRequest->designsWingsPercentageMap.value(key);
-//    }
-//    //        for (int i = 0; i < artisticRequest->authorSingularList->count(); i++)
-//    //        {
-//    //            request->authorSingularList.insert(key, artisticRequest->authorSingularList->value(key));
-//    //            qDebug() << key << artisticRequest->authorSingularList->value(key);
-//    //        }
-
-//    emit artisticAuthorsDesignRespReceived(artisticRequest->authorSingularList);
-//}
 
 QList<QDate> AppController::loadAppleReportFiles(QString path, MainWindow *mainwindow) {
     QStringList nameFilter;
@@ -87,7 +64,6 @@ QList<QDate> AppController::loadAppleReportFiles(QString path, MainWindow *mainw
         QMessageBox::warning( mainwindow, "Warning", message );
     }
 
-
     return dateOfReportList;
 }
 
@@ -108,8 +84,7 @@ QList <QDate> AppController::getDatesOfReports(QStringList list) {
     return dateOfReportList;
 }
 
-QString AppController::getMissingDates(QList <QDate> list)
-{
+QString AppController::getMissingDates(QList <QDate> list) {
     QString message = "";
     QDate firstDate = list.first();
     QDate lastDate = list.last();
@@ -141,43 +116,7 @@ QStandardItemModel *AppController::purchasesModel(const QDate &fromDate, const Q
     Purchases *purchases = new Purchases(fromDate, toDate);
 //    qDebug() << purchases->purchasesModel()->rowCount();
     return purchases->purchasesModel();
-
-    ////      if (authorValue == "DRAWings Snap"){authorList << "Wings Systems";}
-    ////      else {
-    ////        authorList << request->designsAuthors.value(authorValue);
-    ////      }
-    ////      QString developerProceedsString = list[8].replace("	", "");
-    ////      if (developerProceedsString.left(1) == ".")
-    ////      {
-    ////        developerProceedsString = "0" +developerProceedsString;
-    ////      }
-    ////      developerProceedsList << developerProceedsString.toFloat();
-
-    ////      QString customerPriceString = list[15].replace("	", "");
-    ////      if (customerPriceString.left(1) == ".")
-    ////      {
-    ////        customerPriceString = "0" +customerPriceString;
-    ////      }
-    ////      customerPriceList << customerPriceString.toFloat();
 }
-
-//void AppController::populateSaleItemsPerAuthorMap(QMap <QString, QList <SaleItem*>* > *saleItemsPerAuthorMap, MainWindow* mainwindow,
-//                                                  QDate sinceDate, QDate untilDate,
-
-//    // Creates one AuthorList object for each Author and inserts them into a map
-//    for (int i = 0; i < authorsSelectedList.count(); i++) {
-//        QList <SaleItem*>* saleItemList = new QList <SaleItem*>;
-//        saleItemsPerAuthorMap->insert(authorsSelectedList[i], saleItemList);
-//    }
-
-//    while(sinceDate <= untilDate) {
-//        if(isDailyReport(sinceDate))
-//            populateAllSaleItemList(saleItemsPerAuthorMap, &sinceDate, mainwindow);
-//        sinceDate = sinceDate.addDays(1);
-//    }
-//    return;
-//}
-
 
 bool AppController::isDailyReport(QDate date) {
     for (int i = 0; i < mAllDatesList.count(); i++) {
@@ -186,10 +125,4 @@ bool AppController::isDailyReport(QDate date) {
     }
     return false;
 }
-
-QStringList* AppController::getAuthorList() {
-//    qDebug() << request->authorSingularList;
-//    return request->authorSingularList;
-}
-
 

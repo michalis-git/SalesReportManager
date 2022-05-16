@@ -7,8 +7,8 @@
 BalanceSheet::BalanceSheet(const Purchases &purchases)
     : FinancialReport(purchases) {
   m_title = QObject::tr("Balance Sheet Report");
-  m_description = QObject::tr("This report presents the purchases of every design in each currency that the design has been purchased. ");
-  m_description.append("The purchases are being summed for every design and at the end of the report. The date format is dd/mm/yyyy.");
+  m_description = QObject::tr("This report presents all purchases done in the selected time period grouped by product. ");
+  m_description.append("The total revenue for this period is in the end of the table. The date format is dd/mm/yyyy.");
 
   QList<Purchase> purchasesList = purchases.purchaseList();
   for (auto &purchase : purchasesList) {

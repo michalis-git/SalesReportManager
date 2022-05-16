@@ -53,7 +53,6 @@ private slots:
     void onDoneClicked();
     void onExportReportClicked();
     void onQuitClicked();
-    void onListWidgetItemClicked(QListWidgetItem*item);
     void onActionPreferencesTriggered();
 };
 

@@ -60,12 +60,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    this->showMaximized();
 
-    connect(ui->calendarWidget, SIGNAL(clicked(QDate)), this, SLOT(onDateClicked(QDate)));
-    connect(ui->doneButton, SIGNAL(clicked()), this, SLOT(onDoneClicked()));
-    connect(ui->actionExport_Report_as_HTML, SIGNAL(triggered()), this, SLOT(onExportReportClicked()));
-    connect(ui->actionActionExport, SIGNAL(triggered()), this, SLOT(onExportReportClicked()));
-    connect(ui->actionQuit, SIGNAL(triggered()), this, SLOT(onQuitClicked()));
-    connect(ui->listWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(onListWidgetItemClicked(QListWidgetItem*)));
+    connect(ui->calendarWidget, &QCalendarWidget::clicked, this, &MainWindow::onDateClicked);
+    connect(ui->doneButton, &QPushButton::clicked, this, &MainWindow::onDoneClicked);
+    connect(ui->actionExport_Report_as_HTML, &QAction::triggered, this, &MainWindow::onExportReportClicked);
+    connect(ui->actionActionExport, &QAction::triggered, this, &MainWindow::onExportReportClicked);
+    connect(ui->actionQuit, &QAction::triggered, this, &MainWindow::onQuitClicked);
     connect(ui->actionPreferences, &QAction::triggered, this, &MainWindow::onActionPreferencesTriggered);
 
     // Initialize Calendars
@@ -93,14 +92,6 @@ MainWindow::~MainWindow() {
     delete m_dailyModel;
     delete fromCalendarWidget;
     delete toCalendarWidget;
-}
-
-void MainWindow::onListWidgetItemClicked(QListWidgetItem* item) {
-    bool isItemChecked = item->checkState();
-    if (isItemChecked)
-        item->setCheckState(Qt::Unchecked);
-    else
-        item->setCheckState(Qt::Checked);
 }
 
 void MainWindow::onActionPreferencesTriggered() {

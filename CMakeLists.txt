@@ -15,14 +15,12 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS
   Widgets
   Core
   Network
-  ScriptTools
   PrintSupport
   REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS
   Widgets
   Core
   Network
-  ScriptTools
   PrintSupport
   REQUIRED)
 
@@ -76,13 +74,27 @@ add_executable(smt_cmake
 )
 
 add_subdirectory(OpenXLSX)
+#find_package(ZLIB REQUIRED)
+#if (ZLIB_FOUND)
+#    include_directories(${ZLIB_INCLUDE_DIRS})
+#endif()
+
+#set(ZLIB_TEST_SOURCES zpipe.c)
 find_package(ZLIB)
+#find_library(ZLIB, static)
+#SET(ZLIB_USE_STATIC_LIBS "ON")
+add_library(zlib)
+#target_include_directories (zlib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+#INCLUDEPATH += $$[QT_INSTALL_HEADERS]/QtZlib
+##LIBS += -L/usr/local/opt/zlib/lib -lz
+#cmake (-DZLIB_LIBRARY=/lib/path -DZLIB_INCLUDE_DIR=/include/path src_dir)
+
 
 target_link_libraries(smt_cmake PRIVATE
   Qt${QT_VERSION_MAJOR}::Widgets
   Qt${QT_VERSION_MAJOR}::Core
   Qt${QT_VERSION_MAJOR}::Network
-  Qt${QT_VERSION_MAJOR}::ScriptTools
   Qt${QT_VERSION_MAJOR}::PrintSupport
   OpenXLSX::OpenXLSX
   ZLIB::ZLIB)

@@ -43,7 +43,6 @@ public:
 
     QStandardItemModel *purchasesModel(const QDate &fromDate, const QDate &toDate);
 
-    QStringList *getAuthorList();
     QList<QDate> loadAppleReportFiles(QString path, MainWindow *mainwindow);
     QString dailyReportsDirPath();
 

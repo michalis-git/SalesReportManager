@@ -7,8 +7,8 @@
 ProductsByCountry::ProductsByCountry(const Purchases &purchases)
     : FinancialReport(purchases) {
     m_title = QObject::tr("Products by Country Report");
-    m_description = QObject::tr("This report presents the purchases of each product by country. ");
-    m_description.append("The purchases are being summed by design. The date format is dd/mm/yyyy.");
+    m_description = QObject::tr("This report presents all purchases done in the selected time period grouped by product and country. ");
+    m_description.append("The total revenue for this period is in the end of the table. The date format is dd/mm/yyyy.");
 
     QList<Purchase> purchasesList = purchases.purchaseList();
     for (auto &purchase : purchasesList) {

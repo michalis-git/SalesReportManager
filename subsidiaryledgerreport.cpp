@@ -6,9 +6,8 @@
 SubsidiaryLedgerReport::SubsidiaryLedgerReport(const Purchases &purchases)
     : FinancialReport(purchases) {
   m_title = QObject::tr("Subsidiary Ledger Report");
-  m_description = QObject::tr("This report presents all the purchases of the selected time period.");
-  m_description.append("The purchases are being sorted and summed by date. The date format is dd/mm/yyyy.");
-
+  m_description = QObject::tr("This report presents all purchases done in the selected time period grouped by date. ");
+  m_description.append("The total revenue for this period is in the end of the table. The date format is dd/mm/yyyy.");
   QList<Purchase> purchasesList = purchases.purchaseList();
   for (auto &purchase : purchasesList) {
     QString date = purchase.propertyByName(Property::END_DATE).stringValue();
