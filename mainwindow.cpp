@@ -63,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->calendarWidget, &QCalendarWidget::clicked, this, &MainWindow::onDateClicked);
     connect(ui->doneButton, &QPushButton::clicked, this, &MainWindow::onDoneClicked);
     connect(ui->actionExport_Report_as_HTML, &QAction::triggered, this, &MainWindow::onExportReportClicked);
-    connect(ui->actionActionExport, &QAction::triggered, this, &MainWindow::onExportReportClicked);
+    connect(ui->actionExport, &QAction::triggered, this, &MainWindow::onExportReportClicked);
     connect(ui->actionQuit, &QAction::triggered, this, &MainWindow::onQuitClicked);
     connect(ui->actionPreferences, &QAction::triggered, this, &MainWindow::onActionPreferencesTriggered);
 
@@ -217,38 +217,41 @@ void MainWindow::onDoneClicked() {
 }
 
 void MainWindow::onExportReportClicked() {
-  XLDocument doc;
-  doc.create("Spreadsheet.xlsx");
-  auto wks = doc.workbook().worksheet("Sheet1");
-
-  wks.cell("A1").value() = "Hello, OpenXLSX!";
-
-  doc.save();
-//    QFileDialog fileDialog(this, "Save file", QDir::currentPath(), ".html");
+//    QFileDialog fileDialog(this, "Export to xlsx", AppSettings::instance()->exportLocation(), ".xlsx");
 //    fileDialog.setAcceptMode(QFileDialog::AcceptSave);
 //    fileDialog.setWindowModality(Qt::ApplicationModal);
-//    int result = fileDialog.exec();
-//    if (result == 1)
-//    {
-//        QString filename  = fileDialog.selectedFiles().first();
-//        filename.append(".html");
-//        QFile f( filename );
-//        f.open( QIODevice::WriteOnly );
-//        QTextStream outStream(&f);
+//    fileDialog.open();
 
-//        QString htmlString1 = ui->headerTextEdit->document()->toHtml();
-//        htmlString1 = htmlString1.left(htmlString1.length() - 14);
-//        outStream << htmlString1;
-//        //qDebug() << htmlString1;
+//  XLDocument doc;
+//  doc.create("Spreadsheet.xlsx");
+//  auto wks = doc.workbook().worksheet("Sheet1");
 
-//        QString htmlString2 = ui->tableTextEdit->document()->toHtml();
-//        htmlString2 = htmlString2.right(htmlString2.length() - 94);
-//        outStream << htmlString2;
-//        //qDebug() << htmlString2;
+//  wks.cell("A1").value() = "Hello, OpenXLSX!";
 
-//        f.close();
-//    }
-//    else {return;}
+//  doc.save();
+////    QFileDialog fileDialog(this, "Save file", QDir::currentPath(), ".html");
+////    fileDialog.setAcceptMode(QFileDialog::AcceptSave);
+////    if (result == 1)
+////    {
+////        QString filename  = fileDialog.selectedFiles().first();
+////        filename.append(".html");
+////        QFile f( filename );
+////        f.open( QIODevice::WriteOnly );
+////        QTextStream outStream(&f);
+
+////        QString htmlString1 = ui->headerTextEdit->document()->toHtml();
+////        htmlString1 = htmlString1.left(htmlString1.length() - 14);
+////        outStream << htmlString1;
+////        //qDebug() << htmlString1;
+
+////        QString htmlString2 = ui->tableTextEdit->document()->toHtml();
+////        htmlString2 = htmlString2.right(htmlString2.length() - 94);
+////        outStream << htmlString2;
+////        //qDebug() << htmlString2;
+
+////        f.close();
+////    }
+////    else {return;}
 }
 
 void MainWindow::onQuitClicked() {

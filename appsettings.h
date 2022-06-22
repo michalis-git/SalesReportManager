@@ -3,12 +3,15 @@
 
 #include <QString>
 
+class QSettings;
 class AppSettings
 {
     AppSettings();
     AppSettings(AppSettings &other);
     void operator=(const AppSettings &);
+    ~AppSettings();
 
+    QSettings *m_settings;
     QString m_ratesDirPath;
     QString m_reportsDirPath;
     double m_applePercentage;
@@ -25,6 +28,8 @@ public:
     const QString &reportsDirPath() const;
     double applePercentage() const;
     void changeApplePercentage(const double &percentage);
+    const QString exportLocation();
+    void setExportLocation(const QString &exportLocation);
 };
 
 #endif // APPSETTINGS_H

@@ -69,8 +69,10 @@ set(PROJECT_SOURCES
 
 )
 
-add_executable(smt_cmake
+add_executable(
+  smt_cmake
   ${PROJECT_SOURCES}
+  resources.qrc
 )
 
 add_subdirectory(OpenXLSX)

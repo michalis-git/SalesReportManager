@@ -13,6 +13,10 @@
 AppSettings::AppSettings() {
 }
 
+AppSettings::~AppSettings() {
+    delete m_settings;
+}
+
 
 AppSettings *AppSettings::instance() {
     static AppSettings *appSettings = new AppSettings;
@@ -32,13 +36,13 @@ bool AppSettings::initialize(int &error) {
             error = NO_RATES_FOR_BASE_CURRENCY;
     }
 
-    QSettings settings("SMT");
+    m_settings = new QSettings("SMT");
     QString defDailyReportsPath = QDir::homePath() + DAILY_REPORTS_DIR_PATH;
-    m_reportsDirPath = settings.value("dailyReportsDirPath", defDailyReportsPath).toString();
+    m_reportsDirPath = m_settings->value("dailyReportsDirPath", defDailyReportsPath).toString();
     if (!QDir(m_reportsDirPath).exists())
         error = REPORTS_DIR_NOT_EXIST;
 
-    m_applePercentage = settings.value("applePercentage", 30).toDouble();
+    m_applePercentage = m_settings->value("applePercentage", 30).toDouble();
 
 }
 
@@ -48,6 +52,16 @@ const QString &AppSettings::reportsDirPath() const {
 
 const QString &AppSettings::ratesDirPath() const {
     return m_ratesDirPath;
+}
+
+const QString AppSettings::exportLocation() {
+    QString defExportLocation = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    QString exportLocation = m_settings->value("exportLocation", defExportLocation).toString();
+    return exportLocation;
+}
+
+void AppSettings::setExportLocation(const QString &exportLocation) {
+    m_settings->setValue("exportLocation", exportLocation);
 }
 
 double AppSettings::applePercentage() const {
