@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(smt_cmake VERSION 0.1 LANGUAGES CXX)
+project(SalesReportManager VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -70,7 +70,7 @@ set(PROJECT_SOURCES
 )
 
 add_executable(
-  smt_cmake
+  SalesReportManager
   ${PROJECT_SOURCES}
   resources.qrc
 )
@@ -93,7 +93,7 @@ add_library(zlib)
 #cmake (-DZLIB_LIBRARY=/lib/path -DZLIB_INCLUDE_DIR=/include/path src_dir)
 
 
-target_link_libraries(smt_cmake PRIVATE
+target_link_libraries(SalesReportManager PRIVATE
   Qt${QT_VERSION_MAJOR}::Widgets
   Qt${QT_VERSION_MAJOR}::Core
   Qt${QT_VERSION_MAJOR}::Network
@@ -101,7 +101,7 @@ target_link_libraries(smt_cmake PRIVATE
   OpenXLSX::OpenXLSX
   ZLIB::ZLIB)
 
-set_target_properties(smt_cmake PROPERTIES
+set_target_properties(SalesReportManager PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
@@ -110,5 +110,5 @@ set_target_properties(smt_cmake PROPERTIES
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(smt_cmake)
+    qt_finalize_executable(SalesReportManager)
 endif()

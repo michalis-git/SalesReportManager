@@ -21,7 +21,7 @@ private:
 private slots:
     void onBrowseReportsClicked();
     void onBrowseRatesClicked();
-    void onAppleValueChanged(double percentage);
+    void onAccepted();
 };
 
 #endif // PREFERENCESDIALOG_H

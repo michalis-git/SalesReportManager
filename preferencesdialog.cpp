@@ -17,6 +17,7 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
     connect(ui->reportsBrowseBtn, &QPushButton::clicked, this, &PreferencesDialog::onBrowseReportsClicked);
     connect(ui->ratesBrowseBtn, &QPushButton::clicked, this, &PreferencesDialog::onBrowseRatesClicked);
 //    connect(ui->applePercentageSpinBox, &QDoubleSpinBox::valueChanged, this, &PreferencesDialog::onAppleValueChanged);
+    connect(this, &QDialog::accepted, this, &PreferencesDialog::onAccepted);
 }
 
 PreferencesDialog::~PreferencesDialog() {
@@ -57,6 +58,9 @@ void PreferencesDialog::onBrowseRatesClicked() {
     }
 }
 
-void PreferencesDialog::onAppleValueChanged(double percentage) {
-    AppSettings::instance()->changeApplePercentage(percentage);
+
+void PreferencesDialog::onAccepted() {
+  AppSettings *appSettings = AppSettings::instance();
+  appSettings->changeApplePercentage(ui->applePercentageSpinBox->value());
+  appSettings->changeReportsPath(ui->reportsLineEdit->text());
 }

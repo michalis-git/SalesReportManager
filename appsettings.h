@@ -28,6 +28,7 @@ public:
     const QString &reportsDirPath() const;
     double applePercentage() const;
     void changeApplePercentage(const double &percentage);
+    void changeReportsPath(const QString &path);
     const QString exportLocation();
     void setExportLocation(const QString &exportLocation);
 };
