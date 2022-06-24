@@ -30,8 +30,8 @@ void BalanceSheetRep::synthesizeSecondPartOfText()
     mHtmlText1.append("<th width  = 70 scope=\"col\" style=\"text-align: left; background-color: rgb(153, 153, 153);\"><u><span style=\"font-size:14px;\"> € Total </span></u></th>");
     mHtmlText1.append("<th width  = 90 scope=\"col\" style=\"text-align: left; background-color: rgb(153, 153, 153);\"><u><span style=\"font-size:14px;\"> % Apple </span></u></th>");
     mHtmlText1.append("<th width  = 90 scope=\"col\" style=\"text-align: left; background-color: rgb(153, 153, 153);\"><u><span style=\"font-size:14px;\"> &#8364; Apple Rev. </span></u></th>");
-    mHtmlText1.append("<th width  = 90 scope=\"col\" style=\"text-align: left; background-color: rgb(153, 153, 153);\"><u><span style=\"font-size:14px;\"> % Wings </span></u></th>");
-    mHtmlText1.append("<th width  = 120 scope=\"col\" style=\"text-align: left; background-color: rgb(153, 153, 153);\"><u><span style=\"font-size:14px;\"> € Wings Rev. </span></u></th>");
+    mHtmlText1.append("<th width  = 90 scope=\"col\" style=\"text-align: left; background-color: rgb(153, 153, 153);\"><u><span style=\"font-size:14px;\"> % SoftwareHouse </span></u></th>");
+    mHtmlText1.append("<th width  = 120 scope=\"col\" style=\"text-align: left; background-color: rgb(153, 153, 153);\"><u><span style=\"font-size:14px;\"> € SoftwareHouse Rev. </span></u></th>");
     mHtmlText1.append("<th width  = 120 scope=\"col\" style=\"text-align: left; background-color: rgb(153, 153, 153);\"><u><span style=\"font-size:14px;\"> % Designer </span></u></th>");
     mHtmlText1.append("<th width  = 120 scope=\"col\" style=\"text-align: left; background-color: rgb(153, 153, 153);\"><u><span style=\"font-size:14px;\"> € Designer Rev. </span></u></th>");
     mHtmlText1.append("</tr></thead></table></body></html>");
@@ -39,7 +39,7 @@ void BalanceSheetRep::synthesizeSecondPartOfText()
     mHtmlText2 = "<table align=\"left\" border=\"1\" cellpadding=\"1\" cellspacing=\"0\" style=\"width: 500px;\">";
 }
 
-void BalanceSheetRep::appendLineinTable(QString name, QString parent, int numberOfItems, float moneyOfItems, QString currency, float eurosOfItems, float wingsPercentage)
+void BalanceSheetRep::appendLineinTable(QString name, QString parent, int numberOfItems, float moneyOfItems, QString currency, float eurosOfItems, float companyPercentage)
 {
     mHtmlText2.append("<tr><td width  = 100><span style=\"font-size:12px;\">" + author + "</span></td>");
     mHtmlText2.append("<td width  = 190><span style=\"font-size:12px;\">" + name + "</span></td>");
@@ -49,14 +49,14 @@ void BalanceSheetRep::appendLineinTable(QString name, QString parent, int number
     mHtmlText2.append("<td width  = 70><span style=\"font-size:12px;\">" + QString::number(eurosOfItems, 'f', 2) + "</span></td>");
     mHtmlText2.append("<td width  = 90><span style=\"font-size:12px;\"> 30% </span></td>");
     mHtmlText2.append("<td width  = 90><span style=\"font-size:12px;\">" + QString::number(eurosOfItems*0.3, 'f', 2) + "</span></td>");
-    mHtmlText2.append("<td width  = 90><span style=\"font-size:12px;\">" + QString::number(wingsPercentage * 100, 'f', 0) + "%</span></td>");
-    mHtmlText2.append("<td width  = 120><span style=\"font-size:12px;\">" + QString::number(eurosOfItems * wingsPercentage, 'f', 2) + "</span></td>");
-    mHtmlText2.append("<td width  = 120><span style=\"font-size:12px;\">" + QString::number((0.7 - wingsPercentage) * 100, 'f', 0) + "%</span></td>");
-    mHtmlText2.append("<td width  = 120><span style=\"font-size:12px;\">" + QString::number(eurosOfItems * (0.7 - wingsPercentage), 'f', 2) + "</span></td>");
+    mHtmlText2.append("<td width  = 90><span style=\"font-size:12px;\">" + QString::number(companyPercentage * 100, 'f', 0) + "%</span></td>");
+    mHtmlText2.append("<td width  = 120><span style=\"font-size:12px;\">" + QString::number(eurosOfItems * companyPercentage, 'f', 2) + "</span></td>");
+    mHtmlText2.append("<td width  = 120><span style=\"font-size:12px;\">" + QString::number((0.7 - companyPercentage) * 100, 'f', 0) + "%</span></td>");
+    mHtmlText2.append("<td width  = 120><span style=\"font-size:12px;\">" + QString::number(eurosOfItems * (0.7 - companyPercentage), 'f', 2) + "</span></td>");
     mHtmlText2.append("</tr>");
 }
 
-void BalanceSheetRep::appendTotalPerDesignInTable(QString name, QString parent, int numberOfItems, float eurosOfItemsPerDesign, float wingsPercentage)
+void BalanceSheetRep::appendTotalPerDesignInTable(QString name, QString parent, int numberOfItems, float eurosOfItemsPerDesign, float companyPercentage)
 {
     QString str1 = "<td style=\"background-color: #CCFFFF; \"width = ";
     QString str2 = " <span style=\"text-align: left; font-size:12px;\"><strong>";
@@ -68,14 +68,14 @@ void BalanceSheetRep::appendTotalPerDesignInTable(QString name, QString parent, 
     mHtmlText2.append(str1 + "70" + str2 + QString::number(eurosOfItemsPerDesign, 'f', 2) + "</strong></span></td>");
     mHtmlText2.append(str1 + "90" + str2 + " 30% </strong></span></td>");
     mHtmlText2.append(str1 + "90" + str2 + QString::number(eurosOfItemsPerDesign*0.3, 'f', 2) + "</strong></span></td>");
-    mHtmlText2.append(str1 + "90" + str2 + QString::number(wingsPercentage*100, 'f', 0) + "%</strong></span></td>");
-    mHtmlText2.append(str1 + "120" + str2 + QString::number(eurosOfItemsPerDesign * wingsPercentage, 'f', 2) + "</strong></span></td>");
-    mHtmlText2.append(str1 + "120" + str2 + QString::number((0.7 - wingsPercentage)*100, 'f', 0) + "%</strong></span></td>");
-    mHtmlText2.append(str1 + "120" + str2 + QString::number(eurosOfItemsPerDesign * (0.7 - wingsPercentage), 'f', 2) + "</strong></span></td>");
+    mHtmlText2.append(str1 + "90" + str2 + QString::number(companyPercentage*100, 'f', 0) + "%</strong></span></td>");
+    mHtmlText2.append(str1 + "120" + str2 + QString::number(eurosOfItemsPerDesign * companyPercentage, 'f', 2) + "</strong></span></td>");
+    mHtmlText2.append(str1 + "120" + str2 + QString::number((0.7 - companyPercentage)*100, 'f', 0) + "%</strong></span></td>");
+    mHtmlText2.append(str1 + "120" + str2 + QString::number(eurosOfItemsPerDesign * (0.7 - companyPercentage), 'f', 2) + "</strong></span></td>");
     mHtmlText2.append("</tr>");
 }
 
-void BalanceSheetRep::appendTotalOfReportInTable(int numberOfItems, float eurosOfItemsTotal, float wingsRevenueTotal, float designerRevenueTotal)
+void BalanceSheetRep::appendTotalOfReportInTable(int numberOfItems, float eurosOfItemsTotal, float companyRevenueTotal, float designerRevenueTotal)
 {
     mHtmlText2.append("<tr><td width  = 100 style=\"background-color: rgb(153, 153, 153);\"><span style=\"font-size:14px;\"><u><strong>Total:</strong></u></span></td>");
     mHtmlText2.append("<td width  = 190 style=\"background-color: rgb(153, 153, 153);\">  </td>");
@@ -86,7 +86,7 @@ void BalanceSheetRep::appendTotalOfReportInTable(int numberOfItems, float eurosO
     mHtmlText2.append("<td width  = 90 style=\"background-color: rgb(153, 153, 153);\"><span style=\"font-size:14px;\"><strong> 30% </strong></span></td>");
     mHtmlText2.append("<td width  = 90 style=\"background-color: rgb(153, 153, 153);\"><span style=\"font-size:14px;\"><strong>" + QString::number(eurosOfItemsTotal*0.3, 'f', 2) + "</strong></span></td>");
     mHtmlText2.append("<td width  = 90 style=\"background-color: rgb(153, 153, 153);\"><span style=\"font-size:14px;\"><strong>  </strong></span></td>");
-    mHtmlText2.append("<td width  = 120 style=\"background-color: rgb(153, 153, 153);\"><span style=\"font-size:14px;\"><strong>" + QString::number(wingsRevenueTotal, 'f', 2) + "</strong></span></td>");
+    mHtmlText2.append("<td width  = 120 style=\"background-color: rgb(153, 153, 153);\"><span style=\"font-size:14px;\"><strong>" + QString::number(companyRevenueTotal, 'f', 2) + "</strong></span></td>");
     mHtmlText2.append("<td width  = 120 style=\"background-color: rgb(153, 153, 153);\"><span style=\"font-size:14px;\"><strong>  </strong></span></td>");
     mHtmlText2.append("<td width  = 120 style=\"background-color: rgb(153, 153, 153);\"><span style=\"font-size:14px;\"><strong>" + QString::number(designerRevenueTotal, 'f', 2) + "</strong></span></td>");
     mHtmlText2.append("</tr>");

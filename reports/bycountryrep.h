@@ -20,9 +20,9 @@ public:
     void synthesizeText();
     void synthesizeFirstPartOfText();
     void synthesizeSecondPartOfText();
-    void appendLineinTable(QString name, QString country, int numberOfItems, float eurosOfItems, float wingsPercentage);
-    void appendTotalPerDesignInTable(QString name, int numberOfItems, float eurosOfItems, float wingsPercentage);
-    void appendTotalOfReportInTable(int numberOfItems, float eurosOfItemsTotal, float wingsRevenueTotal, float designerRevenueTotal);
+    void appendLineinTable(QString name, QString country, int numberOfItems, float eurosOfItems, float companyPercentage);
+    void appendTotalPerDesignInTable(QString name, int numberOfItems, float eurosOfItems, float companyPercentage);
+    void appendTotalOfReportInTable(int numberOfItems, float eurosOfItemsTotal, float companyRevenueTotal, float designerRevenueTotal);
     void appendFinalPartOfText();
 
 private:

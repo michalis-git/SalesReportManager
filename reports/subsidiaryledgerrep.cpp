@@ -30,8 +30,8 @@ void SubsidiaryLedgerRep::synthesizeSecondPartOfText()
     mHtmlText1.append("<th width = 70 scope=\"col\" style=\"text-align: left; background-color: rgb(153, 153, 153);\"><u><span style=\"font-size:14px;\"> &euro; Total </span></u></th>");
     mHtmlText1.append("<th width = 90 scope=\"col\" style=\"text-align: left; background-color: rgb(153, 153, 153);\"><u><span style=\"font-size:14px;\"> % Apple </span></u></th>");
     mHtmlText1.append("<th width = 90 scope=\"col\" style=\"text-align: left; background-color: rgb(153, 153, 153);\"><u><span style=\"font-size:14px;\"> € Apple Rev.</span></u></th>");
-    mHtmlText1.append("<th width = 90 scope=\"col\" style=\"text-align: left; background-color: rgb(153, 153, 153);\"><u><span style=\"font-size:14px;\"> % Wings </span></u></th>");
-    mHtmlText1.append("<th width = 120 scope=\"col\" style=\"text-align: left; background-color: rgb(153, 153, 153);\"><u><span style=\"font-size:14px;\"> € Wings Rev. </span></u></th>");
+    mHtmlText1.append("<th width = 90 scope=\"col\" style=\"text-align: left; background-color: rgb(153, 153, 153);\"><u><span style=\"font-size:14px;\"> % SoftwareHouse </span></u></th>");
+    mHtmlText1.append("<th width = 120 scope=\"col\" style=\"text-align: left; background-color: rgb(153, 153, 153);\"><u><span style=\"font-size:14px;\"> € SoftwareHouse Rev. </span></u></th>");
     mHtmlText1.append("<th width = 120 scope=\"col\" style=\"text-align: left; background-color: rgb(153, 153, 153);\"><u><span style=\"font-size:14px;\"> % Designer </span></u></th>");
     mHtmlText1.append("<th width = 120 scope=\"col\" style=\"text-align: left; background-color: rgb(153, 153, 153);\"><u><span style=\"font-size:14px;\"> € Designer Rev. </span></u></th>");
     mHtmlText1.append("</tr></thead></table></body></html>");
@@ -39,7 +39,7 @@ void SubsidiaryLedgerRep::synthesizeSecondPartOfText()
     mHtmlText2 = "<table align=\"left\" border=\"1\" cellpadding=\"1\" cellspacing=\"0\" style=\"width: 500px;\">";
 }
 
-void SubsidiaryLedgerRep::appendLineinTable(QString date, QString name, QString parentIdentifier, int numberOfItems, float moneyOfItems, QString currency, float eurosOfItems, float wingsPercentage)
+void SubsidiaryLedgerRep::appendLineinTable(QString date, QString name, QString parentIdentifier, int numberOfItems, float moneyOfItems, QString currency, float eurosOfItems, float companyPercentage)
 {
     mHtmlText2.append("<tr><td width = 100 ><span style=\"font-size:12px;\">" + date + "</span></td>");
     mHtmlText2.append("<td width = 100 ><span style=\"font-size:12px;\">" + author + "</span></td>");
@@ -50,14 +50,14 @@ void SubsidiaryLedgerRep::appendLineinTable(QString date, QString name, QString 
     mHtmlText2.append("<td width = 70><span style=\"font-size:12px;\">" + QString::number(eurosOfItems, 'f', 2) + "</span></td>");
     mHtmlText2.append("<td width = 90><span style=\"font-size:12px;\"> 30% </span></td>");
     mHtmlText2.append("<td width = 90><span style=\"font-size:12px;\">" + QString::number(eurosOfItems*0.3, 'f', 2) + "</span></td>");
-    mHtmlText2.append("<td width = 90><span style=\"font-size:12px;\">" + QString::number(wingsPercentage * 100) + "%</span></td>");
-    mHtmlText2.append("<td width = 120><span style=\"font-size:12px;\">" + QString::number(eurosOfItems*wingsPercentage, 'f', 2) + "</span></td>");
-    mHtmlText2.append("<td width = 120><span style=\"font-size:12px;\">" + QString::number((0.7-wingsPercentage) * 100, 'f', 0) + "%</span></td>");
-    mHtmlText2.append("<td width = 120><span style=\"font-size:12px;\">" + QString::number(eurosOfItems*(0.7-wingsPercentage), 'f', 2) + "</span></td></tr>");
+    mHtmlText2.append("<td width = 90><span style=\"font-size:12px;\">" + QString::number(companyPercentage * 100) + "%</span></td>");
+    mHtmlText2.append("<td width = 120><span style=\"font-size:12px;\">" + QString::number(eurosOfItems*companyPercentage, 'f', 2) + "</span></td>");
+    mHtmlText2.append("<td width = 120><span style=\"font-size:12px;\">" + QString::number((0.7-companyPercentage) * 100, 'f', 0) + "%</span></td>");
+    mHtmlText2.append("<td width = 120><span style=\"font-size:12px;\">" + QString::number(eurosOfItems*(0.7-companyPercentage), 'f', 2) + "</span></td></tr>");
     mHtmlText2.append("</td>");
 }
 
-void SubsidiaryLedgerRep::appendTotalPerDateInTable(QString date, int numberOfItems, float eurosOfItems, float appleRevenue, float wingsRevenue, float designerRevenue)
+void SubsidiaryLedgerRep::appendTotalPerDateInTable(QString date, int numberOfItems, float eurosOfItems, float appleRevenue, float companyRevenue, float designerRevenue)
 {
     QString str1 = "<td style=\"background-color: #CCFFFF; \"width = ";
     QString str2 = " <span style=\"text-align: left; font-size:12px;\"><strong>";
@@ -71,13 +71,13 @@ void SubsidiaryLedgerRep::appendTotalPerDateInTable(QString date, int numberOfIt
     mHtmlText2.append(str1 + "90" + str2 + "30%</strong></span></td>");
     mHtmlText2.append(str1 + "90" + str2 + QString::number(appleRevenue, 'f', 2) + "</strong></span></td>");
     mHtmlText2.append(str1 + "90" + str2 + "  </strong></span></td>");
-    mHtmlText2.append(str1 + "120" + str2 + QString::number(wingsRevenue, 'f', 2) + "</strong></span></td>");
+    mHtmlText2.append(str1 + "120" + str2 + QString::number(companyRevenue, 'f', 2) + "</strong></span></td>");
     mHtmlText2.append(str1 + "120" + str2 + "  </strong></span></td>");
     mHtmlText2.append(str1 + "120" + str2 + QString::number(designerRevenue, 'f', 2) + "</strong></span></td></tr>");
     mHtmlText2.append("</td>");
 }
 
-void SubsidiaryLedgerRep::appendTotalOfReportInTable(int numberOfItems, float eurosOfItemsTotal, float appleTotal, float wingsTotal, float designerTotal)
+void SubsidiaryLedgerRep::appendTotalOfReportInTable(int numberOfItems, float eurosOfItemsTotal, float appleTotal, float companyTotal, float designerTotal)
 {
     mHtmlText2.append("<tr><td width = 100 style=\"background-color: rgb(153, 153, 153);\"><span style=\"font-size:14px;\"><u><strong>Total:</strong></u></span></td>");
     mHtmlText2.append("<td width = 100 style=\"background-color: rgb(153, 153, 153);\">  </td>");
@@ -96,7 +96,7 @@ void SubsidiaryLedgerRep::appendTotalOfReportInTable(int numberOfItems, float eu
     {
         mHtmlText2.append("<td width = 90 style=\"background-color: rgb(153, 153, 153);\"><span style=\"font-size:14px;\"><strong>  </strong></span></td>");
     }
-    mHtmlText2.append("<td width = 120 style=\"background-color: rgb(153, 153, 153);\"><span style=\"font-size:14px;\"><strong>" + QString::number(wingsTotal, 'f', 2) + "</strong></span></td>");
+    mHtmlText2.append("<td width = 120 style=\"background-color: rgb(153, 153, 153);\"><span style=\"font-size:14px;\"><strong>" + QString::number(companyTotal, 'f', 2) + "</strong></span></td>");
     mHtmlText2.append("<td width = 120 style=\"background-color: rgb(153, 153, 153);\"><span style=\"font-size:14px;\"><strong>  </strong></span></td>");
     mHtmlText2.append("<td width = 120 style=\"background-color: rgb(153, 153, 153);\"><span style=\"font-size:14px;\"><strong>" + QString::number(designerTotal, 'f', 2) + "</strong></span></td>");
     mHtmlText2.append("</td>");

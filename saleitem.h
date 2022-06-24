@@ -16,7 +16,7 @@ public:
     QDate date;
     float developerProceeds;
     float developerProceedsinEuros;
-    float wingsPercentage;
+    float companyPercentage;
     float customerPrice;
 };
 
